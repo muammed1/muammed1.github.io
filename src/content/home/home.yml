@@ -1,0 +1,115 @@
+hero:
+  roles:
+    - Backend Developer
+    - Software Engineer
+  availabilityLabel: Open to Work
+  primaryProjectId: gymbo
+  primaryActionLabel: View Gymbo case study
+  resumeActionLabel: View resume
+  contactActionLabel: Contact me
+  actionsAriaLabel: Portfolio actions
+  factsAriaLabel: Professional overview
+  facts:
+    - label: Experience
+      value: Professional software delivery · 2023–2026
+    - label: Core
+      value: PHP · Laravel · relational databases
+    - label: Focus
+      value: Backend systems · business workflows
+  visualLabel: Software Engineer
+  visualTopLabel: PHP / LARAVEL
+  visualBottomLabel: BACKEND / SYSTEMS
+
+about:
+  eyebrow: About
+  title: Engineering around the way a business actually works.
+  description: >-
+    Backend implementation is only useful when it reflects real operational rules, data
+    relationships, and maintenance needs.
+  aiLearningNote: >-
+    My professional experience is in software engineering and backend delivery. My work with AI is
+    a current learning track focused on fundamentals, LLMs, prompt engineering, and AI-assisted
+    development—not a claim of production AI experience.
+  facts:
+    - label: Backend
+      value: PHP, Laravel, SQL, business logic
+    - label: Systems
+      value: Healthcare software, Gymbo, reporting
+    - label: Engineering
+      value: Requirements, databases, debugging, integration
+    - label: Current learning
+      value: AI Engineering foundations and advanced backend topics
+
+experience:
+  eyebrow: Experience
+  title: Professional software delivery in healthcare systems.
+  description: >-
+    A record of building business features, maintaining production modules, resolving defects,
+    and translating operational requirements into software.
+
+skills:
+  eyebrow: Technical skills
+  title: A practical backend toolkit, without percentage bars.
+  description: >-
+    Professional technologies, supporting tools, and current learning are separated so the
+    evidence stays clear.
+
+featuredWork:
+  eyebrow: Featured work
+  title: A private system, documented as an engineering case study.
+  description: >-
+    Gymbo is presented through verified workflow and architecture facts, with clear limits where
+    source code, deployment evidence, or screenshots are unavailable.
+  projectId: gymbo
+  statusLabel: Production delivery documented
+
+projectsPage:
+  title: Projects — Mohammad Zeno
+  description: Published software engineering projects and case studies by Mohammad Zeno.
+  eyebrow: Projects
+  heading: Selected software engineering work.
+  emptyMessage: No published projects are available yet.
+
+approach:
+  eyebrow: Engineering approach
+  title: Conservative decisions for systems that have to keep working.
+  description: The recurring themes behind my backend and business-systems work.
+  items:
+    - title: Business logic clarity
+      body: >-
+        Model operational rules explicitly so backend behavior remains understandable as
+        requirements evolve.
+    - title: Relational data integrity
+      body: >-
+        Design data relationships around the business, with attention to historical correctness
+        and reporting needs.
+    - title: Historical correctness
+      body: >-
+        Preserve the facts that were true at the time of a transaction instead of rewriting
+        history with current values.
+    - title: Reporting separation
+      body: >-
+        Keep operational writes focused while shaping complex reads for dashboards, reports, and
+        exports.
+    - title: Production pragmatism
+      body: >-
+        Prefer conservative, maintainable decisions that support debugging, change, and day-to-day
+        software delivery.
+    - title: System integration
+      body: >-
+        Treat external hardware and operational dependencies as clear boundaries with explicit
+        mapping and persistence.
+
+education:
+  eyebrow: Education
+  title: Computer Engineering, in progress.
+  description: >-
+    Only the verified education status is shown—without invented dates, GPA, honors, or graduation
+    details.
+
+contact:
+  eyebrow: Contact
+  title: Let’s talk about backend work that matters.
+  description: >-
+    I’m open to software engineering and backend opportunities. Email is the most direct way to
+    start a conversation; LinkedIn and GitHub are available for professional context.

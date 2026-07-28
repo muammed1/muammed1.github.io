@@ -7,6 +7,15 @@ interface Props {
 
 const { email, linkedin, github } = Astro.props;
 
+const getProfileLabel = (value: string, fallback: string) => {
+  try {
+    const url = new URL(value);
+    return url.pathname.replace(/^\/|\/$/g, '') || fallback;
+  } catch {
+    return fallback;
+  }
+};
+
 const links = [
   {
     label: 'Email',
@@ -16,13 +25,13 @@ const links = [
   },
   {
     label: 'LinkedIn',
-    value: 'muhmmad-zeno',
+    value: getProfileLabel(linkedin, 'LinkedIn profile'),
     href: linkedin,
     external: true,
   },
   {
     label: 'GitHub',
-    value: 'muammed1',
+    value: getProfileLabel(github, 'GitHub profile'),
     href: github,
     external: true,
   },

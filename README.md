@@ -10,14 +10,15 @@ Canonical deployment target: `https://muammed1.github.io`
 
 - Astro
 - strict TypeScript
-- Astro content collections and typed data modules
+- Astro content collections with schema validation
+- Pages CMS as a Git-backed editing interface
 - semantic HTML
 - modern vanilla CSS with custom properties
 - static SVG assets
 - npm
 
-The site has no backend, database, CMS, analytics tracker, cookies, contact-form service, or
-client-side UI framework.
+The production site has no backend, database, analytics tracker, cookies, contact-form service,
+or client-side UI framework. Pages CMS edits repository content; it is not shipped with the site.
 
 ## Local setup
 
@@ -44,18 +45,21 @@ Astro prints the local URL, normally `http://localhost:4321`.
 
 ## Commands
 
-| Command                | Purpose                                        |
-| ---------------------- | ---------------------------------------------- |
-| `npm run dev`          | Start the local Astro development server       |
-| `npm run format`       | Format supported files with Prettier           |
-| `npm run format:check` | Verify formatting without rewriting files      |
-| `npm run check`        | Run Astro and TypeScript checks                |
-| `npm run build`        | Validate and create the static site in `dist/` |
-| `npm run preview`      | Preview the production build locally           |
+| Command                    | Purpose                                        |
+| -------------------------- | ---------------------------------------------- |
+| `npm run dev`              | Start the local Astro development server       |
+| `npm run validate:cms`     | Validate the Pages CMS configuration           |
+| `npm run validate:content` | Validate managed media and file references     |
+| `npm run format`           | Format supported files with Prettier           |
+| `npm run format:check`     | Verify formatting without rewriting files      |
+| `npm run check`            | Run Astro and TypeScript checks                |
+| `npm run build`            | Validate and create the static site in `dist/` |
+| `npm run preview`          | Preview the production build locally           |
 
 Run the same quality gates used by deployment before opening a pull request:
 
 ```sh
+npm run validate:content
 npm run format:check
 npm run check
 npm run build
@@ -66,15 +70,16 @@ npm run build
 ```text
 src/
   components/             Reusable UI and metadata components
-  content/projects/       Validated project case-study content
-  data/                   Profile, experience, and skill data
+  content/site/           Profile, home, SEO, and site content
+  content/experiences/    Editable professional experience entries
+  content/skills/         Editable skill-group entries
+  content/projects/       Editable project case studies and media
   layouts/                Shared page shell
   pages/                  Static routes
   styles/                 Global styles and design tokens
 public/
   assets/diagrams/        Evidence-based technical illustrations
-  assets/projects/gymbo/  Reserved for approved, sanitized product media
-  resume/                 Reserved for the optional public resume PDF
+  resume/                 Optional public resume PDF uploads
 ```
 
 Update professional facts in the structured content layer, not directly in a visual component.
@@ -84,6 +89,46 @@ and `CONTENT_GAPS.md` records facts and assets that are not safe to publish yet.
 The authoritative source is the read-only `main` branch of
 `muammed1/career-knowledge-base`. Do not copy that private repository into this one.
 
+## Manage content without code
+
+Routine content changes use the hosted [Pages CMS](https://app.pagescms.org) editor:
+
+1. Sign in with GitHub and install the Pages CMS GitHub App for this repository only.
+2. Open `muammed1/muammed1.github.io` on the `main` branch.
+3. Edit profile, home, experience, skills, projects, images, or the resume PDF.
+4. Keep a new project unpublished while reviewing it, then enable **Published** when ready.
+5. Save. Pages CMS commits the files and the GitHub Pages workflow validates and deploys them.
+6. Confirm the Actions run before treating the update as live.
+
+The CMS labels and helper text are in Arabic while public site content remains English. Content
+validation supports JPG, PNG, WebP, and AVIF up to 8 MB, and PDF resumes up to 15 MB. The hosted
+Pages CMS currently has an
+[open upload issue near 4.5 MB](https://github.com/pages-cms/pages-cms/issues/393), so keep direct
+CMS uploads at 4 MB or less. For a larger valid file, use GitHub's **Add file → Upload files** UI
+to place it in the matching media folder, then select it from Pages CMS. This fallback still needs
+no code change or manual deployment. Every project image needs meaningful alternative text.
+CMS-authored YAML and Markdown are excluded from cosmetic Prettier checks and remain protected by
+Astro schemas and `validate:content`.
+
+If validation fails, GitHub Pages keeps the last successful deployment live. Correct the content
+in Pages CMS and save again. A new page type, field schema, visual layout, or site behavior still
+requires a code change and pull request.
+
+## Profile portrait
+
+To add or replace the profile portrait without code:
+
+1. Open **الملف الشخصي والسيرة** in Pages CMS.
+2. Under **الصورة الشخصية**, upload a JPG, JPEG, PNG, WebP, or AVIF file no larger than 4 MB.
+3. Enter a concise English description in **وصف الصورة** for screen-reader users.
+4. Save and wait for the GitHub Pages workflow to complete.
+5. Verify the home page on mobile and desktop. Removing the optional portrait restores the
+   monogram fallback.
+
+The build accepts portraits up to 8 MB. If the file is larger than 4 MB, upload it through
+GitHub's **Add file → Upload files** into `src/content/profile/images`, then select it in Pages CMS
+and save.
+
 ## Resume replacement
 
 The PDF is currently absent, so Resume links lead to the print-friendly `/resume/` page.
@@ -92,15 +137,12 @@ To add a verified general resume:
 
 1. Confirm that it contains no confidential information, another company's name, or a
    company-specific footer.
-2. Add it at exactly
-   `public/resume/Mohammad_Zeno_Backend_Developer_Resume.pdf`.
-3. Update the PDF-targeted Resume CTAs in `src/components/Header.astro`,
-   `src/components/Hero.astro`, and `src/pages/projects/gymbo/index.astro` to
-   `/resume/Mohammad_Zeno_Backend_Developer_Resume.pdf`.
-4. Add `download` only to links whose purpose is explicitly downloading the file; keep
-   `/resume/` available as the accessible HTML version.
-5. Run the production build and verify both the HTML resume and PDF URL.
-6. Remove the resolved entry from `CONTENT_GAPS.md`.
+2. In Pages CMS, open **الملف الشخصي والسيرة**, upload a PDF up to 4 MB in the resume field, and
+   save. For a PDF between 4 MB and 15 MB, upload it through GitHub's **Add file → Upload files**
+   into `public/resume`, then select it in Pages CMS.
+3. Keep `/resume/` available as the accessible HTML version.
+4. Verify the new download link after the deployment succeeds.
+5. Remove the resolved entry from `CONTENT_GAPS.md` in a normal documentation pull request.
 
 Never add an empty or generated placeholder PDF.
 
@@ -114,12 +156,10 @@ To add screenshots later:
 1. Obtain written approval to publish each image.
 2. Remove personal data, client names, credentials, device identifiers, financial records, and
    other sensitive operational data.
-3. Export optimized WebP or AVIF files at useful responsive sizes.
-4. Add them under `public/assets/projects/gymbo/` with descriptive filenames.
-5. Register them in the structured Gymbo content source, including honest captions and
-   descriptive alternative text.
-6. Enable the screenshot UI only after every referenced file exists.
-7. Check mobile and desktop rendering, accessibility, and the production build.
+3. In Pages CMS, open Gymbo and upload the approved images to its cover or gallery fields.
+4. Add honest captions and descriptive alternative text.
+5. Keep the project unpublished while checking mobile and desktop rendering and accessibility.
+6. Publish only after the production build succeeds.
 
 Do not label diagrams, mockups, or generated artwork as product screenshots.
 
@@ -164,6 +204,11 @@ The default and canonical site URL is `https://muammed1.github.io`. To use a cus
 Do not add `CNAME` or change canonical URLs before the domain and DNS ownership are confirmed.
 
 ## Maintenance workflow
+
+For routine, evidence-backed content and media edits, use Pages CMS on `main`. New projects start
+unpublished, and every save is validated by the deployment workflow.
+
+For code, layout, schema, workflow, or CMS-configuration changes:
 
 1. Create a focused branch.
 2. Re-read the relevant authoritative knowledge-base sources.

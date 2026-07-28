@@ -1,0 +1,11 @@
+order: 60
+visible: true
+title: Backend and architecture - current learning
+items:
+  - Advanced Laravel
+  - REST API design
+  - Authentication and authorization
+  - Scalable system design
+  - Layered and modular architecture
+  - Database and query optimization
+kind: learning

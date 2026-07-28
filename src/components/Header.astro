@@ -1,24 +1,42 @@
 ---
+import { getEntry } from 'astro:content';
+
 const pathname = Astro.url.pathname;
 const isHome = pathname === '/';
 
+const [siteEntry, profileEntry] = await Promise.all([
+  getEntry('site', 'site'),
+  getEntry('profile', 'profile'),
+]);
+
+if (!siteEntry) {
+  throw new Error('Missing required site content entry "site".');
+}
+
+if (!profileEntry) {
+  throw new Error('Missing required profile content entry "profile".');
+}
+
+const site = siteEntry.data;
+const profile = profileEntry.data;
+
 const navItems = [
-  { label: 'About', href: isHome ? '#about' : '/#about' },
-  { label: 'Experience', href: isHome ? '#experience' : '/#experience' },
-  { label: 'Skills', href: isHome ? '#skills' : '/#skills' },
-  { label: 'Work', href: isHome ? '#work' : '/#work' },
-  { label: 'Contact', href: isHome ? '#contact' : '/#contact' },
-  { label: 'Resume', href: '/resume/' },
+  { label: site.navigation.about, href: isHome ? '#about' : '/#about' },
+  { label: site.navigation.experience, href: isHome ? '#experience' : '/#experience' },
+  { label: site.navigation.skills, href: isHome ? '#skills' : '/#skills' },
+  { label: site.navigation.work, href: '/projects/' },
+  { label: site.navigation.contact, href: isHome ? '#contact' : '/#contact' },
+  { label: site.navigation.resume, href: '/resume/' },
 ];
 ---
 
 <header class="site-header" data-site-header>
   <div class="container header-inner">
-    <a class="brand" href="/" aria-label="Mohammad Zeno, home">
-      <span class="brand-mark" aria-hidden="true">MZ</span>
+    <a class="brand" href="/" aria-label={`${profile.name}, home`}>
+      <span class="brand-mark" aria-hidden="true">{profile.initials}</span>
       <span class="brand-copy">
-        <strong>Mohammad Zeno</strong>
-        <span>Backend Developer</span>
+        <strong>{profile.name}</strong>
+        <span>{site.brandRole}</span>
       </span>
     </a>
 
@@ -42,7 +60,15 @@ const navItems = [
             <li>
               <a
                 href={item.href}
-                aria-current={item.href === pathname ? 'page' : undefined}
+                aria-current={
+                  item.href === '/projects/'
+                    ? pathname.startsWith('/projects/')
+                      ? 'page'
+                      : undefined
+                    : item.href === pathname
+                      ? 'page'
+                      : undefined
+                }
                 data-nav-link
               >
                 {item.label}

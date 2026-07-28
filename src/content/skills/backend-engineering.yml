@@ -1,0 +1,11 @@
+order: 10
+visible: true
+title: Backend engineering
+description: Technologies and practices supported by professional production work.
+items:
+  - PHP
+  - Laravel
+  - Enterprise application development
+  - Business logic implementation
+  - Production debugging and maintenance
+kind: professional

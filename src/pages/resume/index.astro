@@ -1,17 +1,36 @@
 ---
-import { profile } from '../../data/profile';
-import { experiences } from '../../data/experience';
-import { skillGroups } from '../../data/skills';
+import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const experience = experiences[0];
+const [profileEntry, experienceEntries, skillEntries, projectEntries] = await Promise.all([
+  getEntry('profile', 'profile'),
+  getCollection('experiences'),
+  getCollection('skills'),
+  getCollection('projects'),
+]);
 
-if (!experience) {
-  throw new Error('At least one professional experience entry is required.');
+if (!profileEntry) {
+  throw new Error('Missing required profile content entry "profile".');
 }
+
+const profile = profileEntry.data;
+const resume = profile.resume;
+
+const experiences = experienceEntries
+  .filter((entry) => entry.data.visible)
+  .sort((a, b) => a.data.order - b.data.order || a.id.localeCompare(b.id))
+  .map((entry) => entry.data);
+
+const skillGroups = skillEntries
+  .filter((entry) => entry.data.visible)
+  .sort((a, b) => a.data.order - b.data.order || a.id.localeCompare(b.id))
+  .map((entry) => entry.data);
 
 const professionalGroups = skillGroups.filter((group) => group.kind !== 'learning');
 const learningGroups = skillGroups.filter((group) => group.kind === 'learning');
+const selectedProject = projectEntries.find(
+  (entry) => entry.id === resume.selectedProject.projectId && entry.data.published,
+);
 
 const formatMonth = (value: string | null) => {
   if (!value) return 'Present';
@@ -23,18 +42,37 @@ const formatMonth = (value: string | null) => {
   }).format(new Date(Date.UTC(Number(yearPart), Number(monthPart ?? '1') - 1, 1)));
 };
 
-const title = 'Resume — Mohammad Zeno, Backend Developer';
-const description =
-  'Print-friendly resume for Mohammad Zeno, a backend developer and software engineer experienced in PHP, Laravel, enterprise healthcare systems, databases, and reporting.';
+const getProfileLabel = (value: string, fallback: string) => {
+  try {
+    const url = new URL(value);
+    return url.pathname.replace(/^\/|\/$/g, '') || fallback;
+  } catch {
+    return fallback;
+  }
+};
 ---
 
-<BaseLayout {title} {description} canonicalPath="/resume/" pageClass="resume-page">
+<BaseLayout
+  title={resume.title}
+  description={resume.description}
+  canonicalPath="/resume/"
+  pageClass="resume-page"
+>
   <section class="section--compact" aria-labelledby="resume-name">
     <div class="container">
       <div class="resume-actions" aria-label="Resume actions">
-        <a class="button button--secondary" href={`mailto:${profile.email}`}>Email Mohammad</a>
+        <a class="button button--secondary" href={`mailto:${profile.email}`}>
+          {resume.emailActionLabel}
+        </a>
+        {
+          profile.resumePdf && (
+            <a class="button button--secondary" href={profile.resumePdf} download>
+              {resume.downloadActionLabel}
+            </a>
+          )
+        }
         <button class="button button--primary print-button" type="button" data-print>
-          Print / save as PDF
+          {resume.printActionLabel}
         </button>
       </div>
 
@@ -42,7 +80,7 @@ const description =
         <aside class="resume-sidebar" aria-label="Resume profile and contact">
           <div class="resume-monogram" aria-hidden="true">{profile.initials}</div>
           <h1 id="resume-name">{profile.name}</h1>
-          <p class="resume-title">Backend Developer · Software Engineer</p>
+          <p class="resume-title">{resume.displayedRoles.join(' · ')}</p>
 
           <ul class="resume-contact">
             <li><a href={`mailto:${profile.email}`}>{profile.email}</a></li>
@@ -51,31 +89,29 @@ const description =
                 href={profile.linkedin}
                 target="_blank"
                 rel="noreferrer"
-                aria-label="LinkedIn profile (opens in a new tab)">LinkedIn</a
+                aria-label="LinkedIn profile (opens in a new tab)"
               >
+                {getProfileLabel(profile.linkedin, 'LinkedIn')}
+              </a>
             </li>
             <li>
               <a
                 href={profile.github}
                 target="_blank"
                 rel="noreferrer"
-                aria-label="GitHub profile (opens in a new tab)">github.com/muammed1</a
+                aria-label="GitHub profile (opens in a new tab)"
               >
+                {getProfileLabel(profile.github, 'GitHub')}
+              </a>
             </li>
           </ul>
 
-          <h2>Core technologies</h2>
+          <h2>{resume.coreTechnologiesHeading}</h2>
           <ul class="tag-list">
-            <li>PHP</li>
-            <li>Laravel</li>
-            <li>MySQL</li>
-            <li>Oracle Database</li>
-            <li>SQL</li>
-            <li>JavaScript</li>
-            <li>Git</li>
+            {resume.coreTechnologies.map((technology) => <li>{technology}</li>)}
           </ul>
 
-          <h2>Education</h2>
+          <h2>{resume.educationHeading}</h2>
           <p>
             <strong>{profile.education.degree}</strong><br />
             {profile.education.institution}<br />
@@ -83,7 +119,7 @@ const description =
             <span class="status-label">{profile.education.status}</span>
           </p>
 
-          <h2>Languages</h2>
+          <h2>{resume.languagesHeading}</h2>
           <ul>
             {
               profile.languages.map((language) => (
@@ -97,82 +133,86 @@ const description =
 
         <div class="resume-main">
           <section class="resume-section" aria-labelledby="resume-summary">
-            <h2 id="resume-summary">Professional summary</h2>
-            <p>
-              Software engineer focused on backend and enterprise applications, with professional
-              experience developing and maintaining healthcare software. Experienced in translating
-              requirements into business features, relational data models, reporting workflows, and
-              production fixes.
-            </p>
+            <h2 id="resume-summary">{resume.professionalSummaryHeading}</h2>
+            <p>{resume.professionalSummary}</p>
           </section>
 
-          <section class="resume-section" aria-labelledby="resume-experience">
-            <h2 id="resume-experience">Professional experience</h2>
-            <article class="resume-entry">
-              <p class="resume-entry__date">
-                {formatMonth(experience.startDate)} — {formatMonth(experience.endDate)}
-              </p>
-              <div>
-                <h3>{experience.title}</h3>
-                <p class="resume-entry__company">{experience.company}</p>
-                <p>{experience.summary}</p>
-                <ul>
-                  {experience.highlights.map((highlight) => <li>{highlight}</li>)}
-                </ul>
-                <p>
-                  <strong>Healthcare domains:</strong>
-                  {experience.domains.join(', ')}.
-                </p>
-              </div>
-            </article>
-          </section>
+          {
+            experiences.length > 0 && (
+              <section class="resume-section" aria-labelledby="resume-experience">
+                <h2 id="resume-experience">{resume.experienceHeading}</h2>
+                {experiences.map((experience) => (
+                  <article class="resume-entry">
+                    <p class="resume-entry__date">
+                      {formatMonth(experience.startDate)} — {formatMonth(experience.endDate)}
+                    </p>
+                    <div>
+                      <h3>{experience.title}</h3>
+                      <p class="resume-entry__company">{experience.company}</p>
+                      <p>{experience.summary}</p>
+                      <ul>
+                        {experience.highlights.map((highlight) => (
+                          <li>{highlight}</li>
+                        ))}
+                      </ul>
+                      {experience.domains.length > 0 && (
+                        <p>
+                          <strong>{resume.domainsLabel}:</strong> {experience.domains.join(', ')}.
+                        </p>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </section>
+            )
+          }
 
-          <section class="resume-section" aria-labelledby="resume-project">
-            <h2 id="resume-project">Selected project</h2>
-            <article class="resume-entry">
-              <p class="resume-entry__date">Private project</p>
-              <div>
-                <h3>Gymbo</h3>
-                <p class="resume-entry__company">Engineering case study</p>
-                <p>
-                  Gym-management platform documented as covering operational, financial, and
-                  administrative workflows. Project materials describe ledger-derived balances,
-                  historical price preservation, database-backed reporting, and Dahua
-                  attendance-device synchronization.
-                </p>
-                <p>
-                  Source code and production UI are private. Technology and deployment details are
-                  intentionally not attributed where project-specific documentation is incomplete.
-                </p>
-              </div>
-            </article>
-          </section>
+          {
+            selectedProject && (
+              <section class="resume-section" aria-labelledby="resume-project">
+                <h2 id="resume-project">{resume.selectedProject.heading}</h2>
+                <article class="resume-entry">
+                  <p class="resume-entry__date">{resume.selectedProject.dateLabel}</p>
+                  <div>
+                    <h3>{selectedProject.data.title}</h3>
+                    <p class="resume-entry__company">{resume.selectedProject.roleLabel}</p>
+                    {resume.selectedProject.paragraphs.map((paragraph) => (
+                      <p>{paragraph}</p>
+                    ))}
+                  </div>
+                </article>
+              </section>
+            )
+          }
 
-          <section class="resume-section" aria-labelledby="resume-capabilities">
-            <h2 id="resume-capabilities">Engineering capabilities</h2>
-            {
-              professionalGroups.map((group) => (
-                <div>
-                  <h3>{group.title}</h3>
-                  <p>{group.items.join(' · ')}</p>
-                </div>
-              ))
-            }
-          </section>
+          {
+            professionalGroups.length > 0 && (
+              <section class="resume-section" aria-labelledby="resume-capabilities">
+                <h2 id="resume-capabilities">{resume.capabilitiesHeading}</h2>
+                {professionalGroups.map((group) => (
+                  <div>
+                    <h3>{group.title}</h3>
+                    <p>{group.items.join(' · ')}</p>
+                  </div>
+                ))}
+              </section>
+            )
+          }
 
           <section class="resume-section" aria-labelledby="resume-learning">
-            <h2 id="resume-learning">Current learning</h2>
-            <p>
-              These topics are active development areas and are not presented as professional
-              production experience.
-            </p>
+            <h2 id="resume-learning">{resume.learningHeading}</h2>
+            <p>{resume.learningNote}</p>
             {
-              learningGroups.map((group) => (
-                <div>
-                  <h3>{group.title}</h3>
-                  <p>{group.items.join(' · ')}</p>
-                </div>
-              ))
+              learningGroups.length > 0 ? (
+                learningGroups.map((group) => (
+                  <div>
+                    <h3>{group.title}</h3>
+                    <p>{group.items.join(' · ')}</p>
+                  </div>
+                ))
+              ) : (
+                <p>{profile.currentLearning.join(' · ')}</p>
+              )
             }
           </section>
         </div>

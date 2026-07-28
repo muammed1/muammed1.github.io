@@ -4,9 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "audit:public": "node scripts/audit-public-repository.mjs",
     "dev": "astro dev",
     "check": "astro check",
-    "build": "astro check && astro build",
+    "check:links": "node scripts/check-built-links.mjs",
+    "validate:cms": "node scripts/validate-pages-config.mjs",
+    "validate:content": "node scripts/validate-content.mjs",
+    "build": "npm run validate:cms && npm run validate:content && astro check && astro build",
     "preview": "astro preview",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
@@ -18,6 +22,7 @@
     "@astrojs/check": "0.9.10",
     "prettier": "3.9.6",
     "prettier-plugin-astro": "0.14.1",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "yaml": "^2.9.0"
   }
 }

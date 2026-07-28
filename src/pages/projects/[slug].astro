@@ -1,0 +1,777 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', ({ data }) => data.published);
+
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props as Props;
+const [{ Content, headings }, siteEntry, profileEntry] = await Promise.all([
+  render(project),
+  getEntry('site', 'site'),
+  getEntry('profile', 'profile'),
+]);
+
+if (!siteEntry || !profileEntry) {
+  throw new Error('Required site and profile content entries are missing.');
+}
+
+const { data } = project;
+const site = siteEntry.data;
+const profile = profileEntry.data;
+
+const tocHeadings = headings.filter((heading) => heading.depth === 2);
+const canonicalPath = `/projects/${project.id}/`;
+const pageTitle =
+  data.seo?.title?.trim() || `${data.title} engineering case study | ${profile.name}`;
+const pageDescription = data.seo?.description?.trim() || data.summary;
+const cover = data.cover;
+const gallery = data.gallery ?? [];
+const labels = site.projectDetail ?? {
+  breadcrumbAriaLabel: 'Breadcrumb',
+  homeLabel: 'Home',
+  projectsLabel: 'Projects',
+  kicker: 'Engineering case study',
+  badgesAriaLabel: 'Project status and visibility',
+  readCaseStudyLabel: 'Read the case study',
+  visitLiveLabel: 'Visit live project',
+  viewSourceLabel: 'View source',
+  summaryAriaLabel: 'Project summary',
+  contributionLabel: 'Contribution',
+  statusLabel: 'Status',
+  availabilityLabel: 'Availability',
+  technologyHeading: 'Technology and context',
+  capabilityHeading: 'Capability areas',
+  tocAriaLabel: 'On this page',
+  tocHeading: 'On this page',
+  galleryKicker: 'Project media',
+  galleryTitle: 'Gallery',
+  continueKicker: 'Continue exploring',
+  continueTitle: 'See more of the work and experience.',
+  allProjectsLabel: 'View all projects',
+  resumeLabel: 'View resume',
+  statuses: {
+    deployed: 'Deployed',
+    inDevelopment: 'In development',
+    archived: 'Archived',
+  },
+  privacy: {
+    private: 'Private implementation',
+    public: 'Public project',
+  },
+};
+
+const statusLabels = {
+  deployed: labels.statuses.deployed,
+  'in-development': labels.statuses.inDevelopment,
+  archived: labels.statuses.archived,
+} as const;
+
+const statusLabel = statusLabels[data.status];
+const privacyLabel = data.privacy === 'private' ? labels.privacy.private : labels.privacy.public;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: data.title,
+  description: pageDescription,
+  author: {
+    '@type': 'Person',
+    name: profile.name,
+    url: new URL('/', site.siteUrl).href,
+  },
+  mainEntityOfPage: new URL(canonicalPath, site.siteUrl).href,
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  {canonicalPath}
+  image={cover?.image}
+  imageAlt={cover?.alt}
+  type="article"
+  {jsonLd}
+>
+  <article class="project-case-study">
+    <header class="project-hero">
+      <div class="project-shell">
+        <nav class="breadcrumbs" aria-label={labels.breadcrumbAriaLabel}>
+          <ol>
+            <li><a href="/">{labels.homeLabel}</a></li>
+            <li><a href="/projects/">{labels.projectsLabel}</a></li>
+            <li aria-current="page">{data.title}</li>
+          </ol>
+        </nav>
+
+        <div class:list={['project-hero__grid', { 'project-hero__grid--with-cover': cover }]}>
+          <div class="project-hero__copy">
+            <p class="project-kicker">{labels.kicker}</p>
+            <h1>{data.title}</h1>
+            <p class="project-summary">{data.summary}</p>
+
+            <ul class="project-badges" aria-label={labels.badgesAriaLabel}>
+              <li>{statusLabel}</li>
+              <li>{privacyLabel}</li>
+            </ul>
+
+            <div class="project-actions">
+              <a class="button button--primary" href="#case-study">{labels.readCaseStudyLabel}</a>
+              {
+                data.links?.live && (
+                  <a class="button button--secondary" href={data.links.live}>
+                    {labels.visitLiveLabel}
+                  </a>
+                )
+              }
+              {
+                data.links?.source && (
+                  <a class="button button--secondary" href={data.links.source}>
+                    {labels.viewSourceLabel}
+                  </a>
+                )
+              }
+            </div>
+          </div>
+
+          {
+            cover && (
+              <figure class="project-cover">
+                <Image
+                  src={cover.image}
+                  alt={cover.alt}
+                  format="webp"
+                  quality={82}
+                  widths={[640, 960, 1280]}
+                  sizes="(max-width: 960px) calc(100vw - 2rem), 44vw"
+                  loading="eager"
+                  fetchpriority="high"
+                />
+              </figure>
+            )
+          }
+        </div>
+      </div>
+    </header>
+
+    <div class="project-shell project-layout">
+      <aside class="project-sidebar" aria-label={labels.summaryAriaLabel}>
+        <dl class="project-facts">
+          <div>
+            <dt>{labels.contributionLabel}</dt>
+            <dd>{data.role}</dd>
+          </div>
+          <div>
+            <dt>{labels.statusLabel}</dt>
+            <dd>{statusLabel}</dd>
+          </div>
+          <div>
+            <dt>{labels.availabilityLabel}</dt>
+            <dd>{privacyLabel}</dd>
+          </div>
+        </dl>
+
+        <div class="project-taxonomy">
+          <h2>{labels.technologyHeading}</h2>
+          <ul>
+            {data.technologies.map((technology) => <li>{technology}</li>)}
+          </ul>
+        </div>
+
+        <div class="project-taxonomy">
+          <h2>{labels.capabilityHeading}</h2>
+          <ul>
+            {data.capabilities.map((capability) => <li>{capability}</li>)}
+          </ul>
+        </div>
+
+        {
+          tocHeadings.length > 1 && (
+            <nav class="project-toc" aria-label={labels.tocAriaLabel}>
+              <h2>{labels.tocHeading}</h2>
+              <ol>
+                {tocHeadings.map((heading) => (
+                  <li>
+                    <a href={`#${heading.slug}`}>{heading.text}</a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )
+        }
+      </aside>
+
+      <div class="project-main" id="case-study">
+        <div class="project-prose">
+          <Content />
+        </div>
+
+        {
+          gallery.length > 0 && (
+            <section class="project-gallery" aria-labelledby="project-gallery-title">
+              <div class="project-gallery__heading">
+                <p class="project-kicker">{labels.galleryKicker}</p>
+                <h2 id="project-gallery-title">{labels.galleryTitle}</h2>
+              </div>
+              <div class="project-gallery__grid">
+                {gallery.map((item) => (
+                  <figure>
+                    <Image
+                      src={item.image}
+                      alt={item.alt}
+                      format="webp"
+                      quality={80}
+                      widths={[480, 720, 960]}
+                      sizes="(max-width: 720px) calc(100vw - 2rem), 35rem"
+                      loading="lazy"
+                    />
+                    {item.caption && <figcaption>{item.caption}</figcaption>}
+                  </figure>
+                ))}
+              </div>
+            </section>
+          )
+        }
+
+        <footer class="project-next">
+          <div>
+            <p class="project-kicker">{labels.continueKicker}</p>
+            <h2>{labels.continueTitle}</h2>
+          </div>
+          <div class="project-actions">
+            <a class="button button--primary" href="/projects/">{labels.allProjectsLabel}</a>
+            <a class="button button--secondary" href="/resume/">{labels.resumeLabel}</a>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .project-case-study {
+    --project-accent-soft: rgba(94, 234, 212, 0.09);
+    --project-measure: 46rem;
+  }
+
+  .project-shell {
+    width: min(calc(100% - 2rem), 76rem);
+    margin-inline: auto;
+  }
+
+  .project-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(1.5rem, 4vw, 3rem) clamp(4rem, 9vw, 7rem);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .project-hero::before {
+    position: absolute;
+    z-index: -1;
+    inset: 1rem -12rem auto auto;
+    width: min(38rem, 80vw);
+    height: min(38rem, 80vw);
+    content: '';
+    border: 1px solid rgba(94, 234, 212, 0.11);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(94, 234, 212, 0.08), transparent 66%);
+  }
+
+  .breadcrumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    padding: 0;
+    margin: 0 0 clamp(3rem, 7vw, 5.5rem);
+    color: var(--color-text-muted);
+    font-size: 0.84rem;
+    list-style: none;
+  }
+
+  .breadcrumbs li:not(:last-child)::after {
+    margin-left: 0.45rem;
+    color: rgba(181, 199, 206, 0.5);
+    content: '/';
+  }
+
+  .breadcrumbs a:hover {
+    color: var(--color-accent);
+  }
+
+  .project-hero__grid {
+    display: grid;
+    gap: clamp(2.5rem, 7vw, 6rem);
+    align-items: center;
+  }
+
+  .project-hero__grid--with-cover {
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.75fr);
+  }
+
+  .project-kicker {
+    margin: 0 0 1rem;
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 750;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    max-width: 15ch;
+    margin: 0;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    line-height: 0.94;
+    letter-spacing: -0.065em;
+  }
+
+  .project-summary {
+    max-width: 48rem;
+    margin: clamp(1.5rem, 4vw, 2.5rem) 0 0;
+    color: var(--color-text-soft);
+    font-size: clamp(1.08rem, 2vw, 1.35rem);
+    line-height: 1.7;
+  }
+
+  .project-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    padding: 0;
+    margin: 1.75rem 0 0;
+    list-style: none;
+  }
+
+  .project-badges li {
+    padding: 0.4rem 0.65rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 999px;
+    color: var(--color-text-soft);
+    font-size: 0.75rem;
+  }
+
+  .project-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .button {
+    display: inline-flex;
+    min-height: 2.9rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.05rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-weight: 750;
+    line-height: 1.2;
+    text-decoration: none;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      color 160ms ease,
+      transform 160ms ease;
+  }
+
+  .button:hover {
+    transform: translateY(-2px);
+  }
+
+  .button--primary {
+    border-color: var(--color-accent);
+    color: #041513;
+    background: var(--color-accent);
+  }
+
+  .button--primary:hover {
+    background: #8df5e6;
+  }
+
+  .button--secondary {
+    color: var(--color-text);
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  .button--secondary:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .project-cover {
+    overflow: hidden;
+    margin: 0;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .project-cover :global(img) {
+    width: 100%;
+    height: auto;
+  }
+
+  .project-layout {
+    display: grid;
+    grid-template-columns: minmax(13rem, 0.27fr) minmax(0, 0.73fr);
+    gap: clamp(2.5rem, 7vw, 6rem);
+    align-items: start;
+    padding-block: clamp(3.5rem, 8vw, 7rem);
+  }
+
+  .project-sidebar {
+    position: sticky;
+    top: calc(var(--header-height) + 1.5rem);
+  }
+
+  .project-facts {
+    margin: 0;
+  }
+
+  .project-facts div {
+    padding-block: 1rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .project-facts dt,
+  .project-taxonomy h2,
+  .project-toc h2 {
+    margin: 0 0 0.35rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 750;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .project-facts dd {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 0.86rem;
+    font-weight: 650;
+    line-height: 1.55;
+  }
+
+  .project-taxonomy,
+  .project-toc {
+    padding-top: 1.4rem;
+    margin-top: 1.4rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .project-taxonomy ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    padding: 0;
+    margin: 0.8rem 0 0;
+    list-style: none;
+  }
+
+  .project-taxonomy li {
+    padding: 0.32rem 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-text-soft);
+    font-size: 0.71rem;
+    line-height: 1.3;
+  }
+
+  .project-toc ol {
+    display: grid;
+    gap: 0.3rem;
+    padding: 0;
+    margin: 0.7rem 0 0;
+    list-style: none;
+  }
+
+  .project-toc a {
+    display: block;
+    padding: 0.32rem 0;
+    color: var(--color-text-muted);
+    font-size: 0.78rem;
+    line-height: 1.4;
+    text-decoration: none;
+  }
+
+  .project-toc a:hover {
+    color: var(--color-accent);
+  }
+
+  .project-main {
+    min-width: 0;
+  }
+
+  .project-prose {
+    max-width: var(--project-measure);
+  }
+
+  .project-prose :global(h2),
+  .project-prose :global(h3) {
+    scroll-margin-top: calc(var(--header-height) + 1.5rem);
+  }
+
+  .project-prose :global(h2) {
+    padding-top: clamp(3.5rem, 8vw, 6rem);
+    margin: 0 0 1.4rem;
+    border-top: 1px solid var(--color-border);
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    letter-spacing: -0.045em;
+  }
+
+  .project-prose :global(h2:first-of-type) {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .project-prose :global(h3) {
+    margin: 2.2rem 0 0.75rem;
+    color: var(--color-text);
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+  }
+
+  .project-prose :global(p),
+  .project-prose :global(li) {
+    color: var(--color-text-soft);
+    font-size: 1rem;
+    line-height: 1.82;
+  }
+
+  .project-prose :global(p) {
+    margin-bottom: 1.2rem;
+  }
+
+  .project-prose :global(ul),
+  .project-prose :global(ol) {
+    display: grid;
+    gap: 0.65rem;
+    margin-block: 1.4rem 2rem;
+  }
+
+  .project-prose :global(strong) {
+    color: var(--color-text);
+  }
+
+  .project-prose :global(a) {
+    color: var(--color-accent);
+  }
+
+  .project-prose :global(blockquote) {
+    padding: 1.25rem 1.35rem;
+    margin: 0 0 clamp(3.5rem, 8vw, 6rem);
+    border: 1px solid var(--color-border-strong);
+    border-left: 0.22rem solid var(--color-accent);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    background: var(--project-accent-soft);
+  }
+
+  .project-prose :global(blockquote p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .project-prose :global(img) {
+    width: 100%;
+    height: auto;
+    padding: clamp(0.7rem, 2vw, 1.25rem);
+    margin: 2.25rem 0 0.8rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .project-prose :global(img + em) {
+    display: block;
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+
+  .project-prose :global(table) {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    margin-block: 1.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    border-spacing: 0;
+    background: var(--color-surface);
+  }
+
+  .project-prose :global(th),
+  .project-prose :global(td) {
+    min-width: 12rem;
+    padding: 0.85rem 1rem;
+    border-right: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-soft);
+    font-size: 0.8rem;
+    line-height: 1.55;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .project-prose :global(th) {
+    color: var(--color-text);
+    font-weight: 750;
+  }
+
+  .project-gallery {
+    padding-top: clamp(4rem, 9vw, 7rem);
+    margin-top: clamp(4rem, 9vw, 7rem);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .project-gallery__heading h2 {
+    margin: 0 0 2rem;
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+  }
+
+  .project-gallery__grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .project-gallery figure {
+    overflow: hidden;
+    margin: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+  }
+
+  .project-gallery :global(img) {
+    width: 100%;
+    height: auto;
+  }
+
+  .project-gallery figcaption {
+    padding: 0.9rem 1rem;
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    line-height: 1.55;
+  }
+
+  .project-next {
+    display: flex;
+    gap: 2rem;
+    align-items: end;
+    justify-content: space-between;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    margin-top: clamp(4rem, 9vw, 7rem);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(120deg, var(--project-accent-soft), transparent 58%), var(--color-surface);
+  }
+
+  .project-next h2 {
+    max-width: 18ch;
+    margin: 0;
+    font-size: clamp(1.25rem, 3vw, 1.8rem);
+  }
+
+  .project-next .project-actions {
+    flex-shrink: 0;
+    margin-top: 0;
+  }
+
+  @media (max-width: 62rem) {
+    .project-hero__grid--with-cover {
+      grid-template-columns: 1fr;
+    }
+
+    .project-cover {
+      max-width: 48rem;
+    }
+
+    .project-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .project-sidebar {
+      position: static;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem 2rem;
+    }
+
+    .project-facts,
+    .project-toc {
+      grid-column: 1 / -1;
+    }
+
+    .project-taxonomy,
+    .project-toc {
+      margin-top: 0;
+    }
+
+    .project-toc ol {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.3rem 1rem;
+    }
+  }
+
+  @media (max-width: 42rem) {
+    .project-hero {
+      padding-top: 1rem;
+    }
+
+    .project-actions,
+    .project-next {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .button {
+      width: 100%;
+    }
+
+    .project-sidebar {
+      grid-template-columns: 1fr;
+    }
+
+    .project-facts,
+    .project-toc {
+      grid-column: auto;
+    }
+
+    .project-toc ol {
+      grid-template-columns: 1fr;
+    }
+
+    .project-prose :global(th),
+    .project-prose :global(td) {
+      min-width: 10rem;
+      padding: 0.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .button {
+      transition: none;
+    }
+
+    .button:hover {
+      transform: none;
+    }
+  }
+</style>

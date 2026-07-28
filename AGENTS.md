@@ -8,9 +8,11 @@ site must remain credible, accessible, fast, and conservative about professional
 
 ## Architecture
 
-- Astro performs static generation; there is no server, database, CMS, or form backend.
+- Astro performs static generation; there is no server, database, or form backend.
+- Pages CMS is a Git-backed editing layer configured by `.pages.yml`; it writes managed content
+  and media to this repository and does not run as part of the production site.
 - TypeScript runs in strict mode.
-- Professional content lives in `src/data/` and `src/content/`.
+- Professional and page content lives in validated collections under `src/content/`.
 - Reusable presentation lives in `src/components/`.
 - Page composition lives in `src/pages/`; shared document structure lives in `src/layouts/`.
 - Design tokens and global presentation live in `src/styles/`.
@@ -68,6 +70,7 @@ Use npm and the committed lockfile.
 ```sh
 npm ci
 npm run dev
+npm run validate:content
 npm run format
 npm run format:check
 npm run check
@@ -83,6 +86,7 @@ Use `npm install` only when intentionally changing dependencies and commit the r
 Before handing off a change, run:
 
 ```sh
+npm run validate:content
 npm run format:check
 npm run check
 npm run build
@@ -109,12 +113,32 @@ Do not fabricate product screenshots or generate a fake Gymbo interface. Until a
 sanitized screenshots exist, keep screenshot UI hidden and use clearly labeled technical
 illustrations. Do not create a fake or empty resume PDF.
 
+Pages CMS-managed profile and project images live below their respective `src/content/`
+directories so Astro can validate and optimize them. Raster uploads are limited to 8 MB. Project
+Markdown must give every image meaningful alternative text. Existing evidence-based SVG diagrams
+remain in `public/assets/diagrams/`.
+
 The optional public resume belongs at:
 
 `public/resume/Mohammad_Zeno_Backend_Developer_Resume.pdf`
 
 It must be a general professional resume without another company's branding or a
 company-specific footer.
+
+## Content editing
+
+Routine content and media updates may be made through the hosted Pages CMS application on `main`.
+This is the one intentional exception to the feature-branch workflow for code:
+
+- Keep new projects unpublished until their content, evidence boundary, images, links, and
+  alternative text have been reviewed.
+- Do not use the visual editor to broaden a verified claim or fill an evidence gap.
+- Never place private source text, credentials, client-sensitive records, or local filesystem
+  paths in a CMS field; the repository and its history are public.
+- Treat a failed content deployment as a validation signal. Correct the managed content through
+  Pages CMS; do not bypass the build.
+- Changes to schemas, layouts, components, workflows, or `.pages.yml` remain code changes and must
+  use a feature branch and pull request.
 
 ## Deployment
 

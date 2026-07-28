@@ -27,7 +27,8 @@ Required owner input:
 - confirmation that client names, personal data, credentials, device identifiers, financial
   records, and proprietary details have been removed.
 
-Approved files should be added under `public/assets/projects/gymbo/`.
+Approved files should be uploaded through the Gymbo entry in Pages CMS. Managed project media is
+stored under `src/content/projects/images/` so Astro can validate and optimize it.
 
 ## Missing verified facts
 

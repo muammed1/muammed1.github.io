@@ -1,4 +1,7 @@
 ---
+import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
+import { getEntry } from 'astro:content';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import SEO from '../components/SEO.astro';
@@ -8,7 +11,8 @@ interface Props {
   title: string;
   description: string;
   canonicalPath?: string;
-  image?: string;
+  image?: ImageMetadata;
+  imageAlt?: string;
   type?: 'website' | 'article' | 'profile';
   noindex?: boolean;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
@@ -20,15 +24,44 @@ const {
   description,
   canonicalPath,
   image,
+  imageAlt,
   type,
   noindex,
   jsonLd,
   pageClass = '',
 } = Astro.props;
+
+const [siteEntry, profileEntry] = await Promise.all([
+  getEntry('site', 'site'),
+  getEntry('profile', 'profile'),
+]);
+
+if (!siteEntry || !profileEntry) {
+  throw new Error('Required site and profile content entries are missing.');
+}
+
+const site = siteEntry.data;
+const profile = profileEntry.data;
+const selectedSocialImage = image ?? site.socialPreview?.image;
+const optimizedSocialImage = selectedSocialImage
+  ? await getImage({
+      src: selectedSocialImage,
+      width: 1200,
+      height: 630,
+      fit: 'cover',
+      position: 'center',
+      format: 'png',
+    })
+  : undefined;
+const socialImage = optimizedSocialImage?.src ?? '/social-preview.png';
+const socialImageAlt =
+  imageAlt ??
+  site.socialPreview?.alt ??
+  `${profile.name} — ${profile.roles.slice(0, 2).join(' and ')}`;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={site.language}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -39,7 +72,18 @@ const {
     </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/site.webmanifest" />
-    <SEO {title} {description} {canonicalPath} {image} {type} {noindex} {jsonLd} />
+    <SEO
+      {title}
+      {description}
+      {canonicalPath}
+      image={socialImage}
+      {type}
+      {noindex}
+      {jsonLd}
+      siteUrl={site.siteUrl}
+      siteName={site.siteName}
+      imageAlt={socialImageAlt}
+    />
     <slot name="head" />
   </head>
   <body class={pageClass}>

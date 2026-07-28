@@ -8,9 +8,16 @@ routes and metadata without introducing a client-side application framework.
 
 ## Static delivery
 
-The site is fully static because it does not need authenticated state, a database, a CMS, or
+The site is fully static because it does not need authenticated runtime state, a database, or
 server-side form handling. Static output is fast, has a small operational surface, and deploys
 directly to GitHub Pages without secrets. Contact uses verified external links and `mailto:`.
+
+## Git-backed content editing
+
+Pages CMS provides an authenticated editing interface over the repository instead of adding a
+runtime CMS or content database. Managed content remains reviewable, validated, versioned in Git,
+and built by the same Astro and GitHub Pages pipeline. New projects default to unpublished so an
+editor can save incomplete work without exposing a public route.
 
 ## Restrained visual system
 
@@ -29,10 +36,10 @@ publication-approved assets exist.
 
 ## Content separated from components
 
-Profile, experience, skills, and project material live in typed data or validated content files;
-components handle presentation. This makes factual review possible without searching through
-layout markup, reduces duplicated claims, and allows provenance and conflicts to be maintained
-alongside content changes.
+Profile, page copy, experience, skills, and project material live in validated content
+collections; components handle presentation. This makes factual review possible without searching
+through layout markup, reduces duplicated claims, and allows the same files to be safely edited
+through Pages CMS.
 
 ## Private knowledge base remains private
 

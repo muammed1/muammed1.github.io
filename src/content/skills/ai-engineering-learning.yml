@@ -1,0 +1,10 @@
+order: 50
+visible: true
+title: AI engineering - current learning
+items:
+  - AI Engineering fundamentals
+  - Large Language Models
+  - Prompt engineering
+  - AI-assisted software development
+  - AI application development
+kind: learning

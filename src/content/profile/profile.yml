@@ -1,0 +1,86 @@
+name: Mohammad Zeno
+initials: MZ
+roles:
+  - Software Engineer
+  - Backend Engineer
+  - Aspiring AI Engineer
+headline: Backend engineering for dependable business software.
+valueProposition: >-
+  I translate operational requirements into maintainable backend systems, business workflows,
+  relational data models, and reporting tools.
+summary:
+  - >-
+    Software engineer focused on backend and enterprise applications, with professional experience
+    in healthcare software and fitness-management systems.
+  - >-
+    Experienced in requirements analysis, business workflow design, relational database modeling,
+    financial systems, reporting, production maintenance, and hardware integration.
+  - >-
+    Currently strengthening AI engineering foundations while continuing to deepen backend
+    engineering and software architecture skills.
+availability: Open to software engineering and backend engineering opportunities.
+email: zenomahmmad1@gmail.com
+linkedin: https://www.linkedin.com/in/muhmmad-zeno-b5b4a31a0/
+github: https://github.com/muammed1
+education:
+  degree: Bachelor's degree in Computer Engineering
+  institution: University of Aleppo
+  location: Aleppo, Syria
+  status: In progress
+languages:
+  - name: Arabic
+    proficiency: Native
+  - name: English
+    proficiency: Professional working proficiency
+currentLearning:
+  - AI Engineering fundamentals
+  - Large Language Models
+  - Prompt engineering
+  - AI-assisted software development
+resume:
+  title: Resume — Mohammad Zeno, Backend Developer
+  description: >-
+    Print-friendly resume for Mohammad Zeno, a backend developer and software engineer experienced
+    in PHP, Laravel, enterprise healthcare systems, databases, and reporting.
+  displayedRoles:
+    - Backend Developer
+    - Software Engineer
+  emailActionLabel: Email Mohammad
+  printActionLabel: Print / save as PDF
+  downloadActionLabel: Download PDF
+  coreTechnologiesHeading: Core technologies
+  coreTechnologies:
+    - PHP
+    - Laravel
+    - MySQL
+    - Oracle Database
+    - SQL
+    - JavaScript
+    - Git
+  educationHeading: Education
+  languagesHeading: Languages
+  professionalSummaryHeading: Professional summary
+  professionalSummary: >-
+    Software engineer focused on backend and enterprise applications, with professional experience
+    developing and maintaining healthcare software. Experienced in translating requirements into
+    business features, relational data models, reporting workflows, and production fixes.
+  experienceHeading: Professional experience
+  domainsLabel: Healthcare domains
+  selectedProject:
+    heading: Selected project
+    projectId: gymbo
+    dateLabel: Private project
+    roleLabel: Engineering case study
+    paragraphs:
+      - >-
+        Gym-management platform documented as covering operational, financial, and administrative
+        workflows. Project materials describe ledger-derived balances, historical price
+        preservation, database-backed reporting, and Dahua attendance-device synchronization.
+      - >-
+        Source code and production UI are private. Technology and deployment details are
+        intentionally not attributed where project-specific documentation is incomplete.
+  capabilitiesHeading: Engineering capabilities
+  learningHeading: Current learning
+  learningNote: >-
+    These topics are active development areas and are not presented as professional production
+    experience.
