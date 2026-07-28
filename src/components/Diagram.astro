@@ -1,0 +1,76 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  caption: string;
+  width?: number;
+  height?: number;
+  eager?: boolean;
+}
+
+const { src, alt, caption, width = 1200, height = 760, eager = false } = Astro.props;
+---
+
+<figure class="diagram">
+  <div
+    class="diagram__viewport"
+    tabindex="0"
+    role="group"
+    aria-label={`Scrollable technical illustration: ${caption}`}
+  >
+    <img
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+    />
+  </div>
+  <figcaption>
+    <span aria-hidden="true">Diagram — </span>{caption}
+  </figcaption>
+</figure>
+
+<style>
+  .diagram {
+    margin: clamp(2rem, 5vw, 3.5rem) 0;
+  }
+
+  .diagram__viewport {
+    overflow-x: auto;
+    border: 1px solid var(--color-border, rgba(166, 214, 222, 0.2));
+    border-radius: var(--radius-lg, 1.25rem);
+    background: var(--color-surface, #0b1b27);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 1.5rem 4rem rgba(0, 8, 14, 0.18);
+    scrollbar-color: var(--color-accent, #5ce1d8) var(--color-surface, #0b1b27);
+  }
+
+  .diagram__viewport:focus-visible {
+    outline: 3px solid var(--color-accent, #5ce1d8);
+    outline-offset: 4px;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    min-width: 43rem;
+    height: auto;
+  }
+
+  figcaption {
+    max-width: 65ch;
+    margin-top: 0.9rem;
+    color: var(--color-text-muted, #a9bbc4);
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 45rem) {
+    .diagram__viewport {
+      border-radius: var(--radius-md, 0.9rem);
+    }
+  }
+</style>

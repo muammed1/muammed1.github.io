@@ -1,0 +1,361 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CaseStudySection from '../../../components/CaseStudySection.astro';
+import Diagram from '../../../components/Diagram.astro';
+import SectionHeading from '../../../components/SectionHeading.astro';
+
+const project = await getEntry('projects', 'gymbo');
+
+if (!project) {
+  throw new Error('The Gymbo project content entry is required for this page.');
+}
+
+const projectData = project.data;
+const pageTitle = `${projectData.title} engineering case study | Mohammad Zeno`;
+const pageDescription =
+  'A documentation-led case study of Gymboâ€™s membership, financial, reporting, and Dahua biometric attendance workflows.';
+
+const sections = [
+  ['overview', 'Project overview'],
+  ['business-context', 'Business context'],
+  ['contribution', 'Contribution boundary'],
+  ['functional-scope', 'Functional scope'],
+  ['system-structure', 'System structure'],
+  ['data-reporting', 'Data and reporting'],
+  ['engineering-decisions', 'Engineering decisions'],
+  ['biometric-integration', 'Biometric integration'],
+  ['challenges', 'Challenges and trade-offs'],
+  ['status', 'Results and current status'],
+  ['privacy', 'Privacy and source availability'],
+  ['related-skills', 'Related skills'],
+] as const;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Gymbo engineering case study',
+  description: pageDescription,
+  author: {
+    '@type': 'Person',
+    name: 'Mohammad Zeno',
+    url: 'https://muammed1.github.io/',
+  },
+  mainEntityOfPage: 'https://muammed1.github.io/projects/gymbo/',
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalPath="/projects/gymbo/"
+  type="article"
+  {jsonLd}
+  pageClass="gymbo-case-study"
+>
+  <article class="case-study">
+    <header class="case-hero">
+      <div class="case-shell">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="/">Home</a></li>
+            <li><a href="/#work">Selected work</a></li>
+            <li aria-current="page">Gymbo</li>
+          </ol>
+        </nav>
+
+        <div class="case-hero__grid">
+          <div class="case-hero__copy">
+            <p class="case-kicker">
+              {projectData.title} Â· {projectData.privacy} business-systems project
+            </p>
+            <h1>
+              Gym operations, financial rules, and biometric attendanceâ€”one documented system.
+            </h1>
+            <p class="case-hero__lede">
+              Gymbo is documented as a centralized web application for subscriber, membership,
+              pricing, financial, attendance, locker, trainer, dashboard, and reporting workflows.
+            </p>
+
+            <div class="case-hero__actions">
+              <a class="button button--primary" href="#system-structure">
+                Explore the system structure
+              </a>
+              <a class="button button--secondary" href="/#work"> Back to selected work </a>
+            </div>
+
+            <ul class="case-labels" aria-label="Project disclosure">
+              <li>Private source</li>
+              <li>No fabricated screenshots</li>
+              <li>Documentation-led account</li>
+            </ul>
+          </div>
+
+          <aside class="case-snapshot" aria-labelledby="snapshot-title">
+            <p class="case-snapshot__eyebrow">Evidence snapshot</p>
+            <h2 id="snapshot-title">What the sources support</h2>
+            <dl>
+              <div>
+                <dt>Product</dt>
+                <dd>{projectData.summary}</dd>
+              </div>
+              <div>
+                <dt>Contribution</dt>
+                <dd>Engineering involvement; exact role unverified</dd>
+              </div>
+              <div>
+                <dt>Structure</dt>
+                <dd>Modular monolithic web application</dd>
+              </div>
+              <div>
+                <dt>Data</dt>
+                <dd>Relational records and reporting views</dd>
+              </div>
+              <div>
+                <dt>Integration</dt>
+                <dd>Dahua biometric attendance devices</dd>
+              </div>
+              <div>
+                <dt>Availability</dt>
+                <dd>Private; implementation artifacts unavailable</dd>
+              </div>
+            </dl>
+          </aside>
+        </div>
+      </div>
+    </header>
+
+    <div class="case-shell">
+      <section class="evidence-disclosure">
+        <SectionHeading
+          eyebrow="Evidence policy"
+          title="A technical walkthrough, not a reconstructed product demo"
+          description="This case study uses the most conservative wording supported by the available project documentation. Source code, a verified schema, production runbooks, and sanitized interface screenshots were not available for public inspection."
+        />
+        <p class="evidence-disclosure__note">
+          The diagrams below are original architecture and workflow illustrations. They are not
+          product screenshots, deployment diagrams, or a detailed ERD.
+        </p>
+      </section>
+
+      <nav class="case-toc" aria-label="On this page">
+        <p>On this page</p>
+        <ol>
+          {
+            sections.map(([id, label], index) => (
+              <li>
+                <a href={`#${id}`}>
+                  <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                  {label}
+                </a>
+              </li>
+            ))
+          }
+        </ol>
+      </nav>
+
+      <div class="case-sections">
+        <CaseStudySection
+          id="overview"
+          number="01"
+          title="Project overview"
+          summary="A connected operational system described through its business rules and data flowsâ€”not through an assumed technology stack."
+          tone="accent"
+        >
+          <div class="prose">
+            <p class="prose__lead">
+              Gymbo brings recurring gym operations into one web-based workflow: people and
+              memberships, prices and payments, attendance, physical resources, and management
+              reporting.
+            </p>
+            <p>
+              The available evidence describes an application in use, while leaving its exact
+              implementation stack and production topology undocumented. This distinction matters:
+              the useful engineering story is the way business state moves through the system, not
+              an unsupported framework or infrastructure label.
+            </p>
+          </div>
+
+          <div class="two-up">
+            <article class="info-card">
+              <p class="info-card__label">Documented</p>
+              <h3>Operational breadth</h3>
+              <p>
+                Subscriber, subscription, pricing, finance, attendance, locker, trainer, dashboard,
+                report, and permission concerns are described at a high level.
+              </p>
+            </article>
+            <article class="info-card info-card--quiet">
+              <p class="info-card__label">Not established</p>
+              <h3>Implementation specifics</h3>
+              <p>
+                Language, framework, database engine, hosting, API contracts, deployment topology,
+                and test coverage are not claimed here.
+              </p>
+            </article>
+          </div>
+        </CaseStudySection>
+
+        <CaseStudySection
+          id="business-context"
+          number="02"
+          title="Business context"
+          summary="Membership operations are interconnected: a change in one area can affect financial state, attendance eligibility, and reporting."
+        >
+          <div class="prose">
+            <p>
+              A gym-management system is more than a directory of members. A subscription carries a
+              price at a point in time; a charge changes the memberâ€™s financial position; a payment
+              changes it again; and an attendance event must be associated with the correct internal
+              person.
+            </p>
+            <p>
+              Gymboâ€™s documented rules connect these concerns while preserving traceability. Rather
+              than storing only a mutable balance or replacing old prices, the system is described
+              in terms of financial movements and historical price versions.
+            </p>
+          </div>
+
+          <ol class="logic-chain" aria-label="Connected business events">
+            <li>
+              <span>Subscription</span>
+              <strong>Creates a debit record</strong>
+              <p>The charge contributes to a balance derived from ledger entries.</p>
+            </li>
+            <li>
+              <span>Payment</span>
+              <strong>Creates a credit record</strong>
+              <p>The new movement contributes to the same calculated balance.</p>
+            </li>
+            <li>
+              <span>Price change</span>
+              <strong>Creates historical separation</strong>
+              <p>Existing subscriptions retain their documented price version.</p>
+            </li>
+          </ol>
+        </CaseStudySection>
+
+        <CaseStudySection
+          id="contribution"
+          number="03"
+          title="Contribution boundary"
+          summary="The sources document engineering concerns and decisions, but do not reliably establish an exact title or feature-by-feature ownership."
+        >
+          <div class="boundary-note">
+            <p class="boundary-note__label">Evidence boundary</p>
+            <h3>Exact project role not asserted</h3>
+            <p>
+              Public-safe records support engineering involvement with the system. They do not
+              provide enough evidence to publish a precise project title or assign individual
+              features to one contributor.
+            </p>
+          </div>
+
+          <div class="prose">
+            <p>
+              Within that boundary, the documented work concerns business-rule clarity, historical
+              data correctness, relational reporting, and external-device integration. This page
+              does not assign every design decision solely to one person.
+            </p>
+            <p>
+              It also avoids unsupported claims of sole authorship, team leadership, or exclusive
+              subsystem ownership. A more granular responsibility map should be published only when
+              repository history or a contribution record can be safely disclosed.
+            </p>
+          </div>
+        </CaseStudySection>
+
+        <CaseStudySection
+          id="functional-scope"
+          number="04"
+          title="Functional scope"
+          summary="The documented surface spans daily administration, commercial records, physical resources, and management information."
+        >
+          <div class="capability-grid">
+            <article class="capability">
+              <span aria-hidden="true">01</span>
+              <h3>Subscribers and memberships</h3>
+              <p>Subscriber records, membership types, durations, and subscription management.</p>
+            </article>
+            <article class="capability">
+              <span aria-hidden="true">02</span>
+              <h3>Pricing history</h3>
+              <p>
+                Versioned pricing is described as preserving the value attached to a historical
+                subscription.
+              </p>
+            </article>
+            <article class="capability">
+              <span aria-hidden="true">03</span>
+              <h3>Financial records</h3>
+              <p>Debit and credit movements support a ledger-derived member balance.</p>
+            </article>
+            <article class="capability">
+              <span aria-hidden="true">04</span>
+              <h3>Attendance</h3>
+              <p>Internal attendance records are synchronized from Dahua biometric device logs.</p>
+            </article>
+            <article class="capability">
+              <span aria-hidden="true">05</span>
+              <h3>Resources and staff</h3>
+              <p>Locker and trainer management are included in the described operational scope.</p>
+            </article>
+            <article class="capability">
+              <span aria-hidden="true">06</span>
+              <h3>Decision support</h3>
+              <p>Dashboards, reports, database views, and optional PDF or Excel export.</p>
+            </article>
+          </div>
+
+          <p class="scope-footnote">
+            These capabilities are described as implemented in narrative sources; code-level
+            verification is unavailable. Role-based permissions are documented only at a high level,
+            without a publishable permission matrix.
+          </p>
+        </CaseStudySection>
+
+        <CaseStudySection
+          id="system-structure"
+          number="05"
+          title="System structure"
+          summary="A modular monolith coordinates web workflows, relational persistence, reporting views, and a dedicated hardware-integration boundary."
+          tone="accent"
+        >
+          <div class="prose">
+            <p>
+              The case-study material characterizes Gymbo as a modular monolithic web application.
+              Operational business functions run through an application layer, state is held in a
+              relational database, and reporting projections are provided through database views.
+            </p>
+            <p>
+              Dahua attendance synchronization is described behind a dedicated service layer.
+              â€œDedicatedâ€ describes responsibility separation; it does not establish an
+              independently deployed microservice.
+            </p>
+          </div>
+
+          <Diagram
+            src="/assets/diagrams/gymbo-system-context.svg"
+            alt="Gymbo system context: users access a web application that applies business rules and stores operational records in a relational database. Reporting views support dashboards and PDF or Excel exports. Dahua attendance devices connect through a dedicated integration service layer."
+            caption="High-level system context reconstructed from documented boundaries. Technology choices and deployment topology are deliberately excluded."
+            width={1200}
+            height={760}
+          />
+
+          <div class="claim-boundary">
+            <strong>Architecture boundary</strong>
+            <p>
+              The evidence does not support microservices, Clean Architecture, Domain-Driven Design,
+              or event-driven architecture labels.
+            </p>
+          </div>
+        </CaseStudySection>
+
+        <CaseStudySection
+          id="data-reporting"
+          number="06"
+          title="Data and reporting design"
+          summary="Operational records and reporting projections have distinct responsibilities, while historical and financial rules protect meaning over time."
+        >
+          <div class="prose">
+     çnt¶‰žËkºwµçt°€áÙÜ°€ÝÉ•´¤ì(€€€…±¥¸µ¥Ñ•µÌè•¹ì(€ô((€€¹…Í”µ­¥­•Èì(€€€µ…É¥¸è€À€À€Ä¸ÉÉ•´ì(€€€½±½ÈèÙ…È ´µ…Í”µ…•¹Ð¤ì(€€€™½¹Ðµ™…µ¥±äèÙ…È ´µ™½¹Ðµµ½¹¼°Õ¤µµ½¹½ÍÁ…”°€…Í…‘¥„½‘”œ°µ½¹½ÍÁ…”¤ì(€€€™½¹ÐµÍ¥é”è€À¸ÜÕÉ•´ì(€€€™½¹ÐµÝ•¥¡Ðè€ÜÀÀì(€€€±•ÑÑ•ÈµÍÁ…¥¹œè€À¸ÄÙ•´ì(€€€Ñ•áÐµÑÉ…¹Í™½É´èÕÁÁ•É…Í”ì(€ô((€ Äì(€€€µ…àµÝ¥‘Ñ è€ÄÝ ì(€€€µ…É¥¸è€Àì(€€€™½¹ÐµÍ¥é”è±…µÀ È¸ÙÉ•´°€ÝÙÜ°€Ô¸åÉ•´¤ì(€€€±¥¹”µ¡•¥¡Ðè€À¸äÜì(€€€±•ÑÑ•ÈµÍÁ…¥¹œè€´À¸ÀØÉ•´ì(€€€Ñ•áÐµÝÉ…Àè‰…±…¹”ì(€ô((€€¹…Í”µ¡•É½}}±•‘”ì(€€€µ…àµÝ¥‘Ñ è€ÐÝÉ•´ì(€€€µ…É¥¸è±…µÀ Ä¸ÜÕÉ•´°€ÑÙÜ°€È¸ÝÉ•´¤€À€Àì(€€€½±½ÈèÙ…È ´µ…Í”µµÕÑ•¤ì(€€€™½¹ÐµÍ¥é”è±…µÀ Ä¸ÀáÉ•´°€ÉÙÜ°€Ä¸ÌÕÉ•´¤ì(€€€±¥¹”µ¡•¥¡Ðè€Ä¸Üì(€ô((€€¹…Í”µ¡•É½}}…Ñ¥½¹Ì°(€€¹…Í”µ¹•áÑ}}…Ñ¥½¹Ìì(€€€‘¥ÍÁ±…äè™±•àì(€€€™±•àµÝÉ…ÀèÝÉ…Àì(€€€…Àè€À¸áÉ•´ì(€€€µ…É¥¸µÑ½Àè€È¸ÈÕÉ•´ì(€ô((€€¹‰ÕÑÑ½¸ì(€€€‘¥ÍÁ±…äè¥¹±¥¹”µ™±•àì(€€€µ¥¸µ¡•¥¡Ðè€È¸åÉ•´ì(€€€…±¥¸µ¥Ñ•µÌè•¹Ñ•Èì(€€€©ÕÍÑ¥™äµ½¹Ñ•¹Ðè•¹Ñ•Èì(€€€Á…‘‘¥¹œè€À¸ÜÕÉ•´€Ä¸ÅÉ•´ì(€€€‰½É‘•Èè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€€€‰½É‘•ÈµÉ…‘¥ÕÌè€À¸ÔÕÉ•´ì(€€€™½¹ÐµÍ¥é”è€À¸äÈÕÉ•´ì(€€€™½¹ÐµÝ•¥¡Ðè€ÜÀÀì(€€€±¥¹”µ¡•¥¡Ðè€Ä¸Èì(€€€Ñ•áÐµ‘•½É…Ñ¥½¸è¹½¹”ì(€€€ÑÉ…¹Í¥Ñ¥½¸è(€€€€€‰½É‘•Èµ½±½È€ÄØÁµÌ•…Í”°(€€€€€‰…­É½Õ¹µ½±½È€ÄØÁµÌ•…Í”°(€€€€€½±½È€ÄØÁµÌ•…Í”°(€€€€€ÑÉ…¹Í™½É´€ÄØÁµÌ•…Í”ì(€ô((€€¹‰ÕÑÑ½¸´µÁÉ¥µ…Éäì(€€€‰½É‘•Èµ½±½ÈèÙ…È ´µ…Í”µ…•¹Ð¤ì(€€€‰…­É½Õ¹èÙ…È ´µ…Í”µ…•¹Ð¤ì(€€€½±½Èè€ŒÀØÄØÅˆì(€ô((€€¹‰ÕÑÑ½¸´µÍ•½¹‘…Éäì(€€€‰…­É½Õ¹èÉ‰„ ÈÔÔ°€ÈÔÔ°€ÈÔÔ°€À¸ÀÈÔ¤ì(€€€½±½ÈèÙ…È ´µ…Í”µÑ•áÐ¤ì(€ô((€€¹‰ÕÑÑ½¸é¡½Ù•Èì(€€€ÑÉ…¹Í™½É´èÑÉ…¹Í±…Ñ•d ´ÉÁà¤ì(€ô((€€¹‰ÕÑÑ½¸´µÁÉ¥µ…Éäé¡½Ù•Èì(€€€‰…­É½Õ¹è€Œá‰˜Õ•”ì(€ô((€€¹‰ÕÑÑ½¸´µÍ•½¹‘…Éäé¡½Ù•Èì(€€€‰½É‘•Èµ½±½ÈèÙ…È ´µ…Í”µ…•¹Ð¤ì(€€€½±½ÈèÙ…È ´µ…Í”µ…•¹Ð¤ì(€ô((€€¹‰ÕÑÑ½¸é™½ÕÌµÙ¥Í¥‰±”°(€€¹…Í”µÑ½Œ„é™½ÕÌµÙ¥Í¥‰±”°(€€¹‰É•…‘ÉÕµ‰Ì„é™½ÕÌµÙ¥Í¥‰±”ì(€€€½ÕÑ±¥¹”è€ÍÁàÍ½±¥Ù…È ´µ…Í”µ…•¹Ð¤ì(€€€½ÕÑ±¥¹”µ½™™Í•Ðè€ÑÁàì(€ô((€€¹…Í”µ±…‰•±Ìì(€€€‘¥ÍÁ±…äè™±•àì(€€€™±•àµÝÉ…ÀèÝÉ…Àì(€€€…Àè€À¸ÔÕÉ•´ì(€€€Á…‘‘¥¹œè€Àì(€€€µ…É¥¸è€Ä¸ÙÉ•´€À€Àì(€€€±¥ÍÐµÍÑå±”è¹½¹”ì(€ô((€€¹…Í”µ±…‰•±Ì±¤ì(€€€Á…‘‘¥¹œè€À¸ÐÕÉ•´€À¸ØÕÉ•´ì(€€€‰½É‘•Èè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€€€‰½É‘•ÈµÉ…‘¥ÕÌè€ääåÁàì(€€€½±½ÈèÙ…È ´µ…Í”µµÕÑ•¤ì(€€€™½¹ÐµÍ¥é”è€À¸ÜÕÉ•´ì(€ô((€€¹…Í”µÍ¹…ÁÍ¡½Ðì(€€€Á…‘‘¥¹œè±…µÀ Ä¸ÌÕÉ•´°€ÍÙÜ°€ÉÉ•´¤ì(€€€‰½É‘•Èè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€€€‰½É‘•ÈµÉ…‘¥ÕÌè€Ä¸ÅÉ•´ì(€€€‰…­É½Õ¹è(€€€€€±¥¹•…ÈµÉ…‘¥•¹Ð ÄÐÕ‘•œ°É‰„ äÈ°€ÈÈÔ°€ÈÄØ°€À¸Àà¤°ÑÉ…¹ÍÁ…É•¹Ð€ÐÈ”¤°Ù…È ´µ…Í”µÍÕÉ™…”¤ì(€€€‰½àµÍ¡…‘½Üè€À€Ä¸ÜÕÉ•´€ÕÉ•´É‰„ À°€Ô°€ÄÀ°€À¸ÈÐ¤ì(€ô((€€¹…Í”µÍ¹…ÁÍ¡½Ñ}}•å•‰É½Üì(€€€µ…É¥¸è€À€À€À¸ØÕÉ•´ì(€€€½±½ÈèÙ…È ´µ…Í”µ…•¹Ð¤ì(€€€™½¹ÐµÍ¥é”è€À¸ÜÉÉ•´ì(€€€™½¹ÐµÝ•¥¡Ðè€ÜÔÀì(€€€±•ÑÑ•ÈµÍÁ…¥¹œè€À¸ÄÑ•´ì(€€€Ñ•áÐµÑÉ…¹Í™½É´èÕÁÁ•É…Í”ì(€ô((€€¹…Í”µÍ¹…ÁÍ¡½Ð Èì(€€€µ…É¥¸è€Àì(€€€™½¹ÐµÍ¥é”è€Ä¸ÉÉ•´ì(€ô((€€¹…Í”µÍ¹…ÁÍ¡½Ð‘°ì(€€€µ…É¥¸è€Ä¸ÕÉ•´€À€Àì(€ô((€€¹…Í”µÍ¹…ÁÍ¡½Ð‘°€ø‘¥Øì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹Ìè€Ô¸åÉ•´€Å™Èì(€€€…Àè€ÅÉ•´ì(€€€Á…‘‘¥¹œµ‰±½¬è€À¸áÉ•´ì(€€€‰½É‘•ÈµÑ½Àè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€ô((€€¹…Í”µÍ¹…ÁÍ¡½Ð‘Ðì(€€€½±½ÈèÙ…È ´µ…Í”µµÕÑ•¤ì(€€€™½¹ÐµÍ¥é”è€À¸ÜáÉ•´ì(€ô((€€¹…Í”µÍ¹…ÁÍ¡½Ð‘ì(€€€µ…É¥¸è€Àì(€€€™½¹ÐµÍ¥é”è€À¸àÜÕÉ•´ì(€€€™½¹ÐµÝ•¥¡Ðè€ØÔÀì(€€€±¥¹”µ¡•¥¡Ðè€Ä¸ÐÔì(€ô((€€¹•Ù¥‘•¹”µ‘¥Í±½ÍÕÉ”ì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹Ìèµ¥¹µ…à À°€À¸Øá™È¤µ¥¹µ…à ÄÙÉ•´°€À¸ÌÉ™È¤ì(€€€…Àè±…µÀ ÉÉ•´°€ÝÙÜ°€ÙÉ•´¤ì(€€€…±¥¸µ¥Ñ•µÌè•¹ì(€€€Á…‘‘¥¹œµ‰±½¬è±…µÀ Ì¸ÕÉ•´°€ÝÙÜ°€Ô¸ÜÕÉ•´¤ì(€ô((€€¹•Ù¥‘•¹”µ‘¥Í±½ÍÕÉ•}}¹½Ñ”ì(€€€Á…‘‘¥¹œè€Ä¸ÈÕÉ•´€Ä¸ÑÉ•´ì(€€€µ…É¥¸è€Àì(€€€‰½É‘•Èµ±•™Ðè€ÉÁàÍ½±¥Ù…È ´µ…Í”µ…•¹Ð¤ì(€€€‰…­É½Õ¹èÙ…È ´µ…Í”µ…•¹ÐµÍ½™Ð¤ì(€€€½±½ÈèÙ…È ´µ…Í”µµÕÑ•¤ì(€€€™½¹ÐµÍ¥é”è€À¸åÉ•´ì(€€€±¥¹”µ¡•¥¡Ðè€Ä¸Üì(€ô((€€¹…Í”µÑ½Œì(€€€Á…‘‘¥¹œè€Ä¸ÈÕÉ•´ì(€€€‰½É‘•Èè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€€€‰½É‘•ÈµÉ…‘¥ÕÌè€ÅÉ•´ì(€€€‰…­É½Õ¹èÉ‰„ ÈÔÔ°€ÈÔÔ°€ÈÔÔ°€À¸ÀÄà¤ì(€ô((€€¹…Í”µÑ½Œ€øÀì(€€€µ…É¥¸è€À€À€ÅÉ•´ì(€€€½±½ÈèÙ…È ´µ…Í”µµÕÑ•¤ì(€€€™½¹Ðµ™…µ¥±äèÙ…È ´µ™½¹Ðµµ½¹¼°Õ¤µµ½¹½ÍÁ…”°€…Í…‘¥„½‘”œ°µ½¹½ÍÁ…”¤ì(€€€™½¹ÐµÍ¥é”è€À¸ÜÉÉ•´ì(€€€™½¹ÐµÝ•¥¡Ðè€ÜÀÀì(€€€±•ÑÑ•ÈµÍÁ…¥¹œè€À¸ÄÍ•´ì(€€€Ñ•áÐµÑÉ…¹Í™½É´èÕÁÁ•É…Í”ì(€ô((€€¹…Í”µÑ½Œ½°ì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹ÌèÉ•Á•…Ð Ì°µ¥¹µ…à À°€Å™È¤¤ì(€€€…Àè€À¸ÑÉ•´€ÅÉ•´ì(€€€Á…‘‘¥¹œè€Àì(€€€µ…É¥¸è€Àì(€€€±¥ÍÐµÍÑå±”è¹½¹”ì(€ô((€€¹…Í”µÑ½Œ„ì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹Ìè€ÉÉ•´€Å™Èì(€€€…Àè€À¸ÕÉ•´ì(€€€µ¥¸µ¡•¥¡Ðè€È¸ÙÉ•´ì(€€€…±¥¸µ¥Ñ•µÌè•¹Ñ•Èì(€€€Á…‘‘¥¹œè€À¸ÑÉ•´ì(€€€‰½É‘•ÈµÉ…‘¥ÕÌè€À¸ÑÉ•´ì(€€€½±½ÈèÙ…È ´µ…Í”µÑ•áÐ¤ì(€€€™½¹ÐµÍ¥é”è€À¸àÉÉ•´ì(€€€Ñ•áÐµ‘•½É…Ñ¥½¸è¹½¹”ì(€ô((€€¹…Í”µÑ½Œ„é¡½Ù•Èì(€€€‰…­É½Õ¹èÙ…È ´µ…Í”µ…•¹ÐµÍ½™Ð¤ì(€€€½±½ÈèÙ…È ´µ…Í”µ…•¹Ð¤ì(€ô((€€¹…Í”µÑ½Œ„ÍÁ…¸ì(€€€½±½ÈèÙ…È ´µ…Í”µ…•¹Ð¤ì(€€€™½¹Ðµ™…µ¥±äèÙ…È ´µ™½¹Ðµµ½¹¼°Õ¤µµ½¹½ÍÁ…”°€…Í…‘¥„½‘”œ°µ½¹½ÍÁ…”¤ì(€€€™½¹ÐµÍ¥é”è€À¸ØáÉ•´ì(€ô((€€¹…Í”µÍ•Ñ¥½¹Ìì(€€€Á…‘‘¥¹œµ‰½ÑÑ½´è±…µÀ ÍÉ•´°€åÙÜ°€áÉ•´¤ì(€ô((€€¹ÁÉ½Í”ì(€€€µ…àµÝ¥‘Ñ è€ÐÙÉ•´ì(€ô((€€¹ÁÉ½Í”Àì(€€€µ…É¥¸è€Àì(€€€½±½ÈèÙ…È ´µ…Í”µµÕÑ•¤ì(€€€™½¹ÐµÍ¥é”è€ÅÉ•´ì(€€€±¥¹”µ¡•¥¡Ðè€Ä¸àÈì(€ô((€€¹ÁÉ½Í”À€¬Àì(€€€µ…É¥¸µÑ½Àè€Ä¸ÈÕÉ•´ì(€ô((€€¹ÁÉ½Í”€¹ÁÉ½Í•}}±•…ì(€€€½±½ÈèÙ…È ´µ…Í”µÑ•áÐ¤ì(€€€™½¹ÐµÍ¥é”è±…µÀ Ä¸ÄÍÉ•´°€ÉÙÜ°€Ä¸ÌáÉ•´¤ì(€€€±¥¹”µ¡•¥¡Ðè€Ä¸ØØì(€ô((€€¹ÑÝ¼µÕÀì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹ÌèÉ•Á•…Ð È°µ¥¹µ…à À°€Å™È¤¤ì(€€€…Àè€ÅÉ•´ì(€€€µ…É¥¸µÑ½Àè€È¸ÕÉ•´ì(€ô((€€¹¥¹™¼µ…É°(€€¹…Á…‰¥±¥Ñä°(€€¹‘•¥Í¥½¸µ±¥ÍÐ…ÉÑ¥±”°(€€¹ÍÑ…ÑÕÌµÉ¥…ÉÑ¥±”ì(€€€Á…‘‘¥¹œè±…µÀ Ä¸ÈÕÉ•´°€ÍÙÜ°€Ä¸ÜÕÉ•´¤ì(€€€‰½É‘•Èè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€€€‰½É‘•ÈµÉ…‘¥ÕÌè€À¸åÉ•´ì(€€€‰…­É½Õ¹èÙ…È ´µ…Í”µÍÕÉ™…”¤ì(€ô((€€¹¥¹™¼µ…É´µÅÕ¥•Ðì(€€€‰…­É½Õ¹èÉ‰„ ÈÔÔ°€ÈÔÔ°€ÈÔÔ°€À¸ÀÄà¤ì(€ô((€€¹¥¹™¼µ…É‘}}±…‰•°°(€€¹‘•¥Í¥½¸µ±¥ÍÑ}}ÑåÁ”°(€€¹ÁÉ¥Ù…äµÁ…¹•±}}±…‰•°ì(€€€µ…É¥¸è€À€À€À¸àÕÉ•´ì(€€€½±½ÈèÙ…È ´µ…Í”µ…•¹Ð¤ì(€€€™½¹Ðµ™…µ¥±äèÙ…È ´µ™½¹Ðµµ½¹¼°Õ¤µµ½¹½ÍÁ…”°€…Í…‘¥„½‘”œ°µ½¹½ÍÁ…”¤ì(€€€™½¹ÐµÍ¥é”è€À¸ÝÉ•´ì(€€€™½¹ÐµÝ•¥¡Ðè€ÜÔÀì(€€€±•ÑÑ•ÈµÍÁ…¥¹œè€À¸ÄÉ•´ì(€€€Ñ•áÐµÑÉ…¹Í™½É´èÕÁÁ•É…Í”ì(€ô((€€¹¥¹™¼µ…É Ì°(€€¹…Á…‰¥±¥Ñä Ì°(€€¹‘•¥Í¥½¸µ±¥ÍÐ Ì°(€€¹ÍÑ…ÑÕÌµÉ¥ Ì°(€€¹‘…Ñ„µÁ…ÑÑ•É¹Ì Ì°(€€¹…Í”µ¹•áÐ Ìì(€€€µ…É¥¸è€Àì(€€€™½¹ÐµÍ¥é”è€Ä¸ÀÕÉ•´ì(€€€±¥¹”µ¡•¥¡Ðè€Ä¸ÌÔì(€ô((€€¹¥¹™¼µ…ÉÀé±…ÍÐµ¡¥±°(€€¹…Á…‰¥±¥ÑäÀ°(€€¹‘•¥Í¥½¸µ±¥ÍÐ…ÉÑ¥±”€øÀé¹½Ð ¹‘•¥Í¥½¸µ±¥ÍÑ}}ÑåÁ”¤°(€€¹ÍÑ…ÑÕÌµÉ¥…ÉÑ¥±”€øÀé±…ÍÐµ¡¥±°(€€¹‘…Ñ„µÁ…ÑÑ•É¹Ì…ÉÑ¥±”‘¥ØÀ°(€€¹Í­¥±°µÑ¡•µ•ÌÀì(€€€µ…É¥¸è€À¸áÉ•´€À€Àì(€€€½±½ÈèÙ…È ´µ…Í”µµÕÑ•¤ì(€€€™½¹ÐµÍ¥é”è€À¸åÉ•´ì(€€€±¥¹”µ¡•¥¡Ðè€Ä¸ÜÈì(€ô((€€¹±½¥Œµ¡…¥¸ì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€…Àè€Àì(€€€Á…‘‘¥¹œè€Àì(€€€µ…É¥¸è€È¸ÕÉ•´€À€Àì(€€€½Õ¹Ñ•ÈµÉ•Í•Ðè™±½Üì(€€€±¥ÍÐµÍÑå±”è¹½¹”ì(€ô((€€¹±½¥Œµ¡…¥¸±¤ì(€€€Á½Í¥Ñ¥½¸èÉ•±…Ñ¥Ù”ì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹Ìèµ¥¹µ…à ÝÉ•´°€À¸ÈÑ™È¤µ¥¹µ…à ÄÁÉ•´°€À¸ÌÑ™È¤€Å™Èì(€€€…Àè€Ä¸ÕÉ•´ì(€€€Á…‘‘¥¹œè€Ä¸ÌÕÉ•´€À€Ä¸ÌÕÉ•´€Ä¸ÕÉ•´ì(€€€‰½É‘•ÈµÑ½Àè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€ô((€€¹±½¥Œµ¡…¥¸±¤èé‰•™½É”ì(€€€Á½Í¥Ñ¥½¸è…‰Í½±ÕÑ”ì(€€€¥¹Í•Ðè€Ä¸ØÕÉ•´…ÕÑ¼…ÕÑ¼€Àì(€€€Ý¥‘Ñ è€À¸ÑÉ•´ì(€€€¡•¥¡Ðè€À¸ÑÉ•´ì(€€€½¹Ñ•¹Ðè€œœì(€€€‰½É‘•ÈµÉ…‘¥ÕÌè€ÔÀ”ì(€€€‰…­É½Õ¹èÙ…È ´µ…Í”µ…•¹Ð¤ì(€€€‰½àµÍ¡…‘½Üè€À€À€À€À¸ÍÉ•´Ù…È ´µ…Í”µ…•¹ÐµÍ½™Ð¤ì(€ô((€€¹±½¥Œµ¡…¥¸ÍÁ…¸ì(€€€½±½ÈèÙ…È ´µ…Í”µ…•¹Ð¤ì(€€€™½¹ÐµÍ¥é”è€À¸áÉ•´ì(€€€™½¹ÐµÝ•¥¡Ðè€ÜÔÀì(€ô((€€¹±½¥Œµ¡…¥¸ÍÑÉ½¹œì(€€€™½¹ÐµÍ¥é”è€À¸äÕÉ•´ì(€ô((€€¹±½¥Œµ¡…¥¸Àì(€€€µ…É¥¸è€Àì(€€€½±½ÈèÙ…È ´µ…Í”µµÕÑ•¤ì(€€€™½¹ÐµÍ¥é”è€À¸àÜÕÉ•´ì(€€€±¥¹”µ¡•¥¡Ðè€Ä¸Øì(€ô((€€¹‰½Õ¹‘…Éäµ¹½Ñ”ì(€€€Á…‘‘¥¹œè±…µÀ Ä¸ÑÉ•´°€ÍÙÜ°€ÉÉ•´¤ì(€€€µ…É¥¸µ‰½ÑÑ½´è€ÉÉ•´ì(€€€‰½É‘•Èè€ÅÁàÍ½±¥É‰„ äÈ°€ÈÈÔ°€ÈÄØ°€À¸ÌØ¤ì(€€€‰½É‘•ÈµÉ…‘¥ÕÌè€À¸åÉ•´ì(€€€‰…­É½Õ¹èÙ…È ´µ…Í”µ…•¹ÐµÍ½™Ð¤ì(€ô((€€¹‰½Õ¹‘…Éäµ¹½Ñ•}}±…‰•°ì(€€€µ…É¥¸è€À€À€À¸ÝÉ•´ì(€€€½±½ÈèÙ…È ´µ…Í”µ…•¹Ð¤ì(€€€™½¹ÐµÍ¥é”è€À¸ÜÕÉ•´ì(€€€™½¹ÐµÝ•¥¡Ðè€ÜÔÀì(€€€±•ÑÑ•ÈµÍÁ…¥¹œè€À¸ÄÉ•´ì(€€€Ñ•áÐµÑÉ…¹Í™½É´èÕÁÁ•É…Í”ì(€ô((€€¹‰½Õ¹‘…Éäµ¹½Ñ” Ìì(€€€µ…É¥¸è€À€À€À¸ÜÕÉ•´ì(€€€½±½ÈèÙ…È ´µ…Í”µÑ•áÐ¤ì(€€€™½¹ÐµÍ¥é”è±…µÀ Ä¸ÄÕÉ•´°€ÉÙÜ°€Ä¸ÐÕÉ•´¤ì(€ô((€€¹‰½Õ¹‘…Éäµ¹½Ñ”Àé±…ÍÐµ¡¥±ì(€€€µ…É¥¸è€Àì(€€€½±½ÈèÙ…È ´µ…Í”µÑ•áÐ¤ì(€€€±¥¹”µ¡•¥¡Ðè€Ä¸ÜÈì(€ô((€€¹…Á…‰¥±¥ÑäµÉ¥ì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹ÌèÉ•Á•…Ð È°µ¥¹µ…à À°€Å™È¤¤ì(€€€…Àè€ÅÉ•´ì(€ô((€€¹…Á…‰¥±¥Ñä€øÍÁ…¸ì(€€€‘¥ÍÁ±…äè‰±½¬ì(€€€µ…É¥¸µ‰½ÑÑ½´è€Ä¸ÈÕÉ•´ì(€€€½±½ÈèÙ…È ´µ…Í”µ…•¹Ð¤ì(€€€™½¹Ðµ™…µ¥±äèÙ…È ´µ™½¹Ðµµ½¹¼°Õ¤µµ½¹½ÍÁ…”°€…Í…‘¥„½‘”œ°µ½¹½ÍÁ…”¤ì(€€€™½¹ÐµÍ¥é”è€À¸ÝÉ•´ì(€ô((€€¹Í½Á”µ™½½Ñ¹½Ñ”ì(€€€Á…‘‘¥¹œµÑ½Àè€Ä¸ÈÕÉ•´ì(€€€µ…É¥¸è€Ä¸ÕÉ•´€À€Àì(€€€‰½É‘•ÈµÑ½Àè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€€€½±½ÈèÙ…È ´µ…Í”µµÕÑ•¤ì(€€€™½¹ÐµÍ¥é”è€À¸áÉ•´ì(€€€±¥¹”µ¡•¥¡Ðè€Ä¸ØÔì(€ô((€€¹±…¥´µ‰½Õ¹‘…Éäì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹Ìèµ¥¹µ…à åÉ•´°€À¸ÈÕ™È¤€Å™Èì(€€€…Àè€Ä¸ÕÉ•´ì(€€€Á…‘‘¥¹œè€Ä¸ÉÉ•´€Ä¸ÌÕÉ•´ì(€€€‰½É‘•Èè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€€€‰½É‘•ÈµÉ…‘¥ÕÌè€À¸ÜÕÉ•´ì(€€€‰…­É½Õ¹èÉ‰„ ÈÔÔ°€ÈÔÔ°€ÈÔÔ°€À¸ÀÄà¤ì(€ô((€€¹±…¥´µ‰½Õ¹‘…ÉäÍÑÉ½¹œì(€€€½±½ÈèÙ…È ´µ…Í”µ…•¹Ð¤ì(€€€™½¹ÐµÍ¥é”è€À¸àÉÉ•´ì(€ô((€€¹±…¥´µ‰½Õ¹‘…ÉäÀì(€€€µ…É¥¸è€Àì(€€€½±½ÈèÙ…È ´µ…Í”µµÕÑ•¤ì(€€€™½¹ÐµÍ¥é”è€À¸àÙÉ•´ì(€€€±¥¹”µ¡•¥¡Ðè€Ä¸ØÔì(€ô((€€¹±…¥´µ‰½Õ¹‘…Éä´µÝ…É¹¥¹œì(€€€‰½É‘•Èµ½±½ÈèÉ‰„ ÈÐÀ°€Äàä°€äÜ°€À¸Èà¤ì(€ô((€€¹±…¥´µ‰½Õ¹‘…Éä´µÝ…É¹¥¹œÍÑÉ½¹œì(€€€½±½Èè€˜Á‰ØÄì(€ô((€€¹‘…Ñ„µÁ…ÑÑ•É¹Ìì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€…Àè€Àì(€€€µ…É¥¸µÑ½Àè€È¸ÕÉ•´ì(€ô((€€¹‘…Ñ„µÁ…ÑÑ•É¹Ì…ÉÑ¥±”ì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹Ìè€ÍÉ•´€Å™Èì(€€€…Àè€Ä¸ÉÉ•´ì(€€€Á…‘‘¥¹œµ‰±½¬è€Ä¸ÌÕÉ•´ì(€€€‰½É‘•ÈµÑ½Àè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€ô((€€¹Á…ÑÑ•É¸µ¥¹‘•àì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€Ý¥‘Ñ è€È¸ÈÕÉ•´ì(€€€¡•¥¡Ðè€È¸ÈÕÉ•´ì(€€€Á±…”µ¥Ñ•µÌè•¹Ñ•Èì(€€€µ…É¥¸è€Àì(€€€‰½É‘•Èè€ÅÁàÍ½±¥É‰„ äÈ°€ÈÈÔ°€ÈÄØ°€À¸Ð¤ì(€€€‰½É‘•ÈµÉ…‘¥ÕÌè€ÔÀ”ì(€€€½±½ÈèÙ…È ´µ…Í”µ…•¹Ð¤ì(€€€™½¹Ðµ™…µ¥±äèÙ…È ´µ™½¹Ðµµ½¹¼°Õ¤µµ½¹½ÍÁ…”°€…Í…‘¥„½‘”œ°µ½¹½ÍÁ…”¤ì(€€€™½¹ÐµÍ¥é”è€À¸ÝÉ•´ì(€ô((€€¹‘…Ñ„µÁ…ÑÑ•É¹Ì…ÉÑ¥±”‘¥ØÀì(€€€µ…àµÝ¥‘Ñ è€ÐÁÉ•´ì(€ô((€€¹‘•¥Í¥½¸µ±¥ÍÐ°(€€¹ÍÑ…ÑÕÌµÉ¥ì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹ÌèÉ•Á•…Ð È°µ¥¹µ…à À°€Å™È¤¤ì(€€€…Àè€ÅÉ•´ì(€ô((€€¹‘•¥Í¥½¸µ±¥ÍÐÍµ…±°ì(€€€‘¥ÍÁ±…äè‰±½¬ì(€€€Á…‘‘¥¹œµÑ½Àè€ÅÉ•´ì(€€€µ…É¥¸µÑ½Àè€ÅÉ•´ì(€€€‰½É‘•ÈµÑ½Àè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€€€½±½ÈèÙ…È ´µ…Í”µµÕÑ•¤ì(€€€™½¹ÐµÍ¥é”è€À¸ÜÙÉ•´ì(€€€±¥¹”µ¡•¥¡Ðè€Ä¸ÔÔì(€ô((€€¹¡…±±•¹”µÑ…‰±”ì(€€€½Ù•É™±½Üµàè…ÕÑ¼ì(€€€‰½É‘•Èè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€€€‰½É‘•ÈµÉ…‘¥ÕÌè€À¸åÉ•´ì(€ô((€€¹¡…±±•¹”µÑ…‰±”é™½ÕÌµÙ¥Í¥‰±”ì(€€€½ÕÑ±¥¹”è€ÍÁàÍ½±¥Ù…È ´µ…Í”µ…•¹Ð¤ì(€€€½ÕÑ±¥¹”µ½™™Í•Ðè€ÑÁàì(€ô((€Ñ…‰±”ì(€€€Ý¥‘Ñ è€ÄÀÀ”ì(€€€µ¥¸µÝ¥‘Ñ è€ÐÑÉ•´ì(€€€‰½É‘•Èµ½±±…ÁÍ”è½±±…ÁÍ”ì(€€€‰…­É½Õ¹èÙ…È ´µ…Í”µÍÕÉ™…”¤ì(€ô((€…ÁÑ¥½¸ì(€€€Á…‘‘¥¹œè€Ä¸ÉÉ•´ì(€€€½±½ÈèÙ…È ´µ…Í”µÑ•áÐ¤ì(€€€™½¹ÐµÍ¥é”è€À¸äÕÉ•´ì(€€€™½¹ÐµÝ•¥¡Ðè€ÜÀÀì(€€€Ñ•áÐµ…±¥¸è±•™Ðì(€ô((€Ñ °(€Ñì(€€€Á…‘‘¥¹œè€ÅÉ•´€Ä¸ÅÉ•´ì(€€€‰½É‘•ÈµÑ½Àè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€€€™½¹ÐµÍ¥é”è€À¸àÉÉ•´ì(€€€±¥¹”µ¡•¥¡Ðè€Ä¸ÔÔì(€€€Ñ•áÐµ…±¥¸è±•™Ðì(€€€Ù•ÉÑ¥…°µ…±¥¸èÑ½Àì(€ô((€Ñ¡•…Ñ ì(€€€½±½ÈèÙ…È ´µ…Í”µ…•¹Ð¤ì(€€€™½¹ÐµÍ¥é”è€À¸ÝÉ•´ì(€€€±•ÑÑ•ÈµÍÁ…¥¹œè€À¸Àá•´ì(€€€Ñ•áÐµÑÉ…¹Í™½É´èÕÁÁ•É…Í”ì(€ô((€Ñ‰½‘äÑ ì(€€€Ý¥‘Ñ è€ÌÌ”ì(€€€½±½ÈèÙ…È ´µ…Í”µÑ•áÐ¤ì(€ô((€Ñì(€€€½±½ÈèÙ…È ´µ…Í”µµÕÑ•¤ì(€ô((€€¹ÍÑ…ÑÕÌµÉ¥‘}}ÍÑ…Ñ”ì(€€€‘¥ÍÁ±…äè¥¹±¥¹”µ™±•àì(€€€Á…‘‘¥¹œè€À¸ÍÉ•´€À¸ÕÉ•´ì(€€€µ…É¥¸è€À€À€ÅÉ•´ì(€€€‰½É‘•Èè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€€€‰½É‘•ÈµÉ…‘¥ÕÌè€ääåÁàì(€€€½±½ÈèÙ…È ´µ…Í”µµÕÑ•¤ì(€€€™½¹ÐµÍ¥é”è€À¸ØÝÉ•´ì(€€€™½¹ÐµÝ•¥¡Ðè€ÜÔÀì(€€€±•ÑÑ•ÈµÍÁ…¥¹œè€À¸Àá•´ì(€€€Ñ•áÐµÑÉ…¹Í™½É´èÕÁÁ•É…Í”ì(€ô((€€¹ÍÑ…ÑÕÌµÉ¥‘}}ÍÑ…Ñ”´µÍÕÁÁ½ÉÑ•ì(€€€‰½É‘•Èµ½±½ÈèÉ‰„ äÈ°€ÈÈÔ°€ÈÄØ°€À¸ÐÈ¤ì(€€€‰…­É½Õ¹èÙ…È ´µ…Í”µ…•¹ÐµÍ½™Ð¤ì(€€€½±½ÈèÙ…È ´µ…Í”µ…•¹Ð¤ì(€ô((€€¹ÁÉ¥Ù…äµÁ…¹•°ì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹ÌèÉ•Á•…Ð È°µ¥¹µ…à À°€Å™È¤¤ì(€€€…Àè€ÅÁàì(€€€½Ù•É™±½Üè¡¥‘‘•¸ì(€€€µ…É¥¸µ‰½ÑÑ½´è€È¸ÕÉ•´ì(€€€‰½É‘•Èè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€€€‰½É‘•ÈµÉ…‘¥ÕÌè€À¸åÉ•´ì(€€€‰…­É½Õ¹èÙ…È ´µ…Í”µ‰½É‘•È¤ì(€ô((€€¹ÁÉ¥Ù…äµÁ…¹•°€ø‘¥Øì(€€€Á…‘‘¥¹œè±…µÀ Ä¸ÈÕÉ•´°€ÍÙÜ°€Ä¸ÜÕÉ•´¤ì(€€€‰…­É½Õ¹èÙ…È ´µ…Í”µÍÕÉ™…”¤ì(€ô((€€¹¡•¬µ±¥ÍÐì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€…Àè€À¸åÉ•´ì(€€€Á…‘‘¥¹œè€Àì(€€€µ…É¥¸è€Àì(€€€±¥ÍÐµÍÑå±”è¹½¹”ì(€ô((€€¹¡•¬µ±¥ÍÐ±¤ì(€€€Á½Í¥Ñ¥½¸èÉ•±…Ñ¥Ù”ì(€€€Á…‘‘¥¹œµ±•™Ðè€Ä¸ÌÕÉ•´ì(€€€½±½ÈèÙ…È ´µ…Í”µÑ•áÐ¤ì(€€€™½¹ÐµÍ¥é”è€À¸àÙÉ•´ì(€€€±¥¹”µ¡•¥¡Ðè€Ä¸ÔÔì(€ô((€€¹¡•¬µ±¥ÍÐ±¤èé‰•™½É”ì(€€€Á½Í¥Ñ¥½¸è…‰Í½±ÕÑ”ì(€€€¥¹Í•Ðè€À¸ÐÉÉ•´…ÕÑ¼…ÕÑ¼€Àì(€€€Ý¥‘Ñ è€À¸ÐÕÉ•´ì(€€€¡•¥¡Ðè€À¸ÐÕÉ•´ì(€€€½¹Ñ•¹Ðè€œœì(€€€‰½É‘•Èè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ…•¹Ð¤ì(€€€‰½É‘•ÈµÉ…‘¥ÕÌè€ÔÀ”ì(€ô((€€¹¡•¬µ±¥ÍÐ´µµÕÑ•±¤ì(€€€½±½ÈèÙ…È ´µ…Í”µµÕÑ•¤ì(€ô((€€¹Í­¥±°µÑ¡•µ•Ìì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹ÌèÉ•Á•…Ð È°µ¥¹µ…à À°€Å™È¤¤ì(€€€…Àè€Àì(€€€Á…‘‘¥¹œè€Àì(€€€µ…É¥¸è€Àì(€€€‰½É‘•ÈµÑ½Àè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€€€±¥ÍÐµÍÑå±”è¹½¹”ì(€ô((€€¹Í­¥±°µÑ¡•µ•Ì±¤ì(€€€‘¥ÍÁ±…äèÉ¥ì(€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹Ìè€ÉÉ•´€Å™Èì(€€€½±Õµ¸µ…Àè€À¸ÜÕÉ•´ì(€€€Á…‘‘¥¹œè€Ä¸ÑÉ•´€ÅÉ•´€Ä¸ÑÉ•´€Àì(€€€‰½É‘•Èµ‰½ÑÑ½´è€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€ô((€€¹Í­¥±°µÑ¡•µ•Ì±¤é¹Ñ µ¡¥±¡½‘¤ì(€€€Á…‘‘¥¹œµÉ¥¡Ðè€Ä¸ÕÉ•´ì(€€€‰½É‘•ÈµÉ¥¡Ðè€ÅÁàÍ½±¥Ù…È ´µ…Í”µ‰½É‘•È¤ì(€ô((€€¹Í­¥±°µÑ¡•µ•Ì±¤é¹Ñ µ¡¥±¡•Ù•¸¤ì(€€€Á…‘‘¥¹œµ±•™Ðè€Ä¸ÕÉ•´ì(€ô((€€¹Í­¥±°µÑ¡•µ•ÌÍÁ…¸ì(€€€É¥µÉ½Üè€Ä€¼ÍÁ…¸€Èì(€€€½±½ÈèÙ…È ´µ…Í”µ…•¹Ð¤ì(€€€™½¹Ðµ™…µ¥±äèÙ…È ´µ™½¹Ðµµ½¹¼°Õ¤µµ½¹½ÍÁ…”°€…Í…‘¥„½‘”œ°µ½¹½ÍÁ…”¤ì(€€€™½¹ÐµÍ¥é”è€À¸ØáÉ•´ì(€ô((€€¹Í­¥±°µÑ¡•µ•ÌÍÑÉ½¹œì(€€€™½¹ÐµÍ¥é”è€À¸äÕÉ•´ì(€ô((€€¹Í­¥±°µÑ¡•µ•ÌÀì(€€€É¥µ½±Õµ¸è€Èì(€ô((€€¹…Í”µ¹•áÐì(€€€‘¥ÍÁ±…äè™±•àì(€€€…Àè€ÉÉ•´ì(€€€…±¥¸µ¥Ñ•µÌè•¹ì(€€€©ÕÍÑ¥™äµ½¹Ñ•¹ÐèÍÁ…”µ‰•ÑÝ••¸ì(€€€Á…‘‘¥¹œè±…µÀ Ä¸ÕÉ•´°€ÑÙÜ°€È¸ÕÉ•´¤ì(€€€µ…É¥¸µÑ½Àè€ÍÉ•´ì(€€€‰½É‘•Èè€ÅÁàÍ½±¥É‰„ äÈ°€ÈÈÔ°€ÈÄØ°€À¸ÌÈ¤ì(€€€‰½É‘•ÈµÉ…‘¥ÕÌè€ÅÉ•´ì(€€€‰…­É½Õ¹è(€€€€€±¥¹•…ÈµÉ…‘¥•¹Ð ÄÈÁ‘•œ°Ù…È ´µ…Í”µ…•¹ÐµÍ½™Ð¤°ÑÉ…¹ÍÁ…É•¹Ð€ÔÔ”¤°Ù…È ´µ…Í”µÍÕÉ™…”¤ì(€ô((€€¹…Í”µ¹•áÐ€¹…Í”µ­¥­•Èì(€€€µ…É¥¸µ‰½ÑÑ½´è€À¸ÝÉ•´ì(€ô((€€¹…Í”µ¹•áÐ Ìì(€€€™½¹ÐµÍ¥é”è±…µÀ Ä¸ÈÕÉ•´°€È¸ÕÙÜ°€Ä¸ÜÕÉ•´¤ì(€ô((€€¹…Í”µ¹•áÑ}}…Ñ¥½¹Ìì(€€€™±•àµÍ¡É¥¹¬è€Àì(€€€µ…É¥¸µÑ½Àè€Àì(€ô((€µ•‘¥„€¡µ…àµÝ¥‘Ñ è€ØÁÉ•´¤ì(€€€€¹…Í”µ¡•É½}}É¥°(€€€€¹•Ù¥‘•¹”µ‘¥Í±½ÍÕÉ”ì(€€€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹Ìè€Å™Èì(€€€ô((€€€€¹…Í”µÍ¹…ÁÍ¡½Ðì(€€€€€µ…àµÝ¥‘Ñ è€ÌáÉ•´ì(€€€ô((€€€€¹…Í”µÑ½Œ½°ì(€€€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹ÌèÉ•Á•…Ð È°µ¥¹µ…à À°€Å™È¤¤ì(€€€ô(€ô((€µ•‘¥„€¡µ…àµÝ¥‘Ñ è€ÐÕÉ•´¤ì(€€€€¹…Í”µÍ¡•±°ì(€€€€€Ý¥‘Ñ èµ¥¸ ÄÀÀ”€´€ÉÉ•´°€ÜÉÉ•´¤ì(€€€ô((€€€€¹…Í”µ¡•É¼ì(€€€€€Á…‘‘¥¹œµÑ½Àè€Ä¸ÕÉ•´ì(€€€ô((€€€€¹…Í”µ¡•É½}}…Ñ¥½¹Ì°(€€€€¹…Í”µ¹•áÑ}}…Ñ¥½¹Ìì(€€€€€…±¥¸µ¥Ñ•µÌèÍÑÉ•Ñ ì(€€€€€™±•àµ‘¥É•Ñ¥½¸è½±Õµ¸ì(€€€ô((€€€€¹‰ÕÑÑ½¸ì(€€€€€Ý¥‘Ñ è€ÄÀÀ”ì(€€€ô((€€€€¹…Í”µÑ½Œ½°°(€€€€¹ÑÝ¼µÕÀ°(€€€€¹…Á…‰¥±¥ÑäµÉ¥°(€€€€¹‘•¥Í¥½¸µ±¥ÍÐ°(€€€€¹ÍÑ…ÑÕÌµÉ¥°(€€€€¹ÁÉ¥Ù…äµÁ…¹•°°(€€€€¹Í­¥±°µÑ¡•µ•Ìì(€€€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹Ìè€Å™Èì(€€€ô((€€€€¹±½¥Œµ¡…¥¸±¤ì(€€€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹Ìè€Å™Èì(€€€€€…Àè€À¸ÐÕÉ•´ì(€€€ô((€€€€¹±…¥´µ‰½Õ¹‘…Éäì(€€€€€É¥µÑ•µÁ±…Ñ”µ½±Õµ¹Ìè€Å™Èì(€€€€€…Àè€À¸ØÕÉ•´ì(€€€ô((€€€€¹ÁÉ¥Ù…äµÁ…¹•°ì(€€€€€…Àè€ÅÁàì(€€€ô((€€€€¹Í­¥±°µÑ¡•µ•Ì±¤°(€€€€¹Í­¥±°µÑ¡•µ•Ì±¤é¹Ñ µ¡¥±¡½‘¤°(€€€€¹Í­¥±°µÑ¡•µ•Ì±¤é¹Ñ µ¡¥±¡•Ù•¸¤ì(€€€€€Á…‘‘¥¹œè€Ä¸ÈÕÉ•´€Àì(€€€€€‰½É‘•ÈµÉ¥¡Ðè€Àì(€€€ô((€€€€¹…Í”µ¹•áÐì(€€€€€…±¥¸µ¥Ñ•µÌèÍÑÉ•Ñ ì(€€€€€™±•àµ‘¥É•Ñ¥½¸è½±Õµ¸ì(€€€ô(€ô((€µ•‘¥„€¡ÁÉ•™•ÉÌµÉ•‘Õ•µµ½Ñ¥½¸èÉ•‘Õ”¤ì(€€€€¹‰ÕÑÑ½¸ì(€€€€€ÑÉ…¹Í¥Ñ¥½¸è¹½¹”ì(€€€ô((€€€€¹‰ÕÑÑ½¸é¡½Ù•Èì(€€€€€ÑÉ…¹Í™½É´è¹½¹”ì(€€€ô(€ô(ð½ÍÑå±”ø(
