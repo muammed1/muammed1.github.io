@@ -805,7 +805,130 @@ section {
 
 .check-list li::before {
   position: absolute;
-  top: 0.68rÔŒ-¢Gß≤⁄Óù∆≠y—rd__visual {
+  top: 0.68rem;
+  left: 0;
+  width: 0.45rem;
+  height: 0.45rem;
+  border: 1px solid var(--color-accent);
+  content: '';
+  transform: rotate(45deg);
+}
+
+.domain-list {
+  display: flex;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.domain-list span,
+.tag-list li,
+.project-capabilities li {
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text-soft);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1.35;
+  background: rgba(255, 255, 255, 0.022);
+}
+
+.domain-list span {
+  padding: 0.4rem 0.65rem;
+}
+
+.skills-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.skill-group {
+  padding: 1.4rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: rgba(11, 24, 40, 0.7);
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.skill-group:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface);
+  transform: translateY(-3px);
+}
+
+.skill-group--learning {
+  border-style: dashed;
+  background: rgba(13, 43, 45, 0.38);
+}
+
+.skill-group header {
+  display: flex;
+  margin-bottom: 0.8rem;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.skill-index {
+  display: grid;
+  width: 1.55rem;
+  height: 1.55rem;
+  place-items: center;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 50%;
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.skill-group h3 {
+  margin: 0;
+  font-size: 1.08rem;
+}
+
+.skill-group p {
+  margin-bottom: 1rem;
+  font-size: 0.88rem;
+}
+
+.skill-group ul {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  list-style: none;
+}
+
+.skill-group li {
+  padding: 0.32rem 0.58rem;
+  border-radius: 0.35rem;
+  color: var(--color-text-soft);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.skill-group--learning li {
+  color: #c5e9e2;
+  background: rgba(94, 234, 212, 0.07);
+}
+
+.project-card {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+  grid-template-columns: minmax(18rem, 0.86fr) minmax(0, 1.14fr);
+}
+
+.project-card__visual {
   position: relative;
   min-height: 31rem;
   overflow: hidden;
