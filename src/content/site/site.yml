@@ -1,0 +1,58 @@
+siteUrl: https://muammed1.github.io
+siteName: Mohammad Zeno — Software Engineering Portfolio
+defaultTitle: Mohammad Zeno — Backend Developer & Software Engineer
+defaultDescription: >-
+  Backend developer and software engineer specializing in PHP, Laravel, enterprise business
+  systems, relational databases, reporting, and production software delivery.
+language: en
+brandRole: Backend Developer
+footerTagline: Backend engineering for clear, maintainable business systems.
+backToTopLabel: Back to top
+navigation:
+  about: About
+  experience: Experience
+  skills: Skills
+  work: Work
+  contact: Contact
+  resume: Resume
+projectDetail:
+  breadcrumbAriaLabel: Breadcrumb
+  homeLabel: Home
+  projectsLabel: Projects
+  kicker: Engineering case study
+  badgesAriaLabel: Project status and visibility
+  readCaseStudyLabel: Read the case study
+  visitLiveLabel: Visit live project
+  viewSourceLabel: View source
+  summaryAriaLabel: Project summary
+  contributionLabel: Contribution
+  statusLabel: Status
+  availabilityLabel: Availability
+  technologyHeading: Technology and context
+  capabilityHeading: Capability areas
+  tocAriaLabel: On this page
+  tocHeading: On this page
+  galleryKicker: Project media
+  galleryTitle: Gallery
+  continueKicker: Continue exploring
+  continueTitle: See more of the work and experience.
+  allProjectsLabel: View all projects
+  resumeLabel: View resume
+  statuses:
+    deployed: Deployed
+    inDevelopment: In development
+    archived: Archived
+  privacy:
+    private: Private implementation
+    public: Public project
+personJobTitles:
+  - Backend Developer
+  - Software Engineer
+personKnowsAbout:
+  - PHP
+  - Laravel
+  - Relational database design
+  - Enterprise software
+  - Business systems
+  - Reporting systems
+  - Production debugging

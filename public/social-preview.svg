@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Mohammad Zeno, Backend Developer and Software Engineer</title>
+  <desc id="desc">A typographic MZ monogram beside Mohammad Zeno's name and engineering focus on a dark navy background.</desc>
+  <defs>
+    <linearGradient id="panel" x1="102" y1="72" x2="1078" y2="558" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#101F31"/>
+      <stop offset="1" stop-color="#0A1625"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="140" y1="128" x2="424" y2="482" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#67E8F9"/>
+      <stop offset="1" stop-color="#2DD4BF"/>
+    </linearGradient>
+    <pattern id="grid" width="44" height="44" patternUnits="userSpaceOnUse">
+      <path d="M44 0H0V44" fill="none" stroke="#183047" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="#07111F"/>
+  <rect width="1200" height="630" fill="url(#grid)" opacity=".4"/>
+  <circle cx="1080" cy="62" r="260" fill="#0D4F5A" opacity=".22"/>
+  <circle cx="78" cy="590" r="210" fill="#123F60" opacity=".2"/>
+
+  <rect x="72" y="64" width="1056" height="502" rx="32" fill="url(#panel)" stroke="#263B52" stroke-width="2"/>
+  <rect x="118" y="112" width="330" height="406" rx="28" fill="#081522" stroke="#294159" stroke-width="2"/>
+  <path d="M157 434V196h42l84 107 84-107h42v238h-47V273l-79 99-79-99v161h-47Z" fill="#F4F8FC"/>
+  <path d="M264 196h145v39l-83 160h83v39H264v-39l83-160h-83v-39Z" fill="url(#accent)" opacity=".96"/>
+  <circle cx="394" cy="152" r="7" fill="#67E8F9"/>
+  <path d="M148 478H418" stroke="#2DD4BF" stroke-width="4" stroke-linecap="round"/>
+
+  <g font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+    <text x="516" y="186" fill="#67E8F9" font-size="24" font-weight="700" letter-spacing="5">ENGINEERING PORTFOLIO</text>
+    <text x="512" y="296" fill="#F4F8FC" font-size="72" font-weight="760" letter-spacing="-2">Mohammad</text>
+    <text x="512" y="374" fill="#F4F8FC" font-size="72" font-weight="760" letter-spacing="-2">Zeno</text>
+    <text x="516" y="435" fill="#B8C8D9" font-size="30" font-weight="520">Backend Developer / Software Engineer</text>
+    <g fill="#8DA4B9" font-size="21" font-weight="600" letter-spacing="1">
+      <text x="516" y="490">BACKEND SYSTEMS</text>
+      <circle cx="735" cy="483" r="4" fill="#2DD4BF"/>
+      <text x="754" y="490">RELATIONAL DATA</text>
+      <circle cx="948" cy="483" r="4" fill="#2DD4BF"/>
+      <text x="967" y="490">DELIVERY</text>
+    </g>
+  </g>
+</svg>

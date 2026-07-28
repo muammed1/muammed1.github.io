@@ -1,0 +1,833 @@
+media:
+  - name: site_images
+    label: صور محركات البحث والمشاركة
+    input: src/content/site/images
+    output: ./images
+    extensions: [jpg, jpeg, png, webp, avif]
+    categories: [image]
+    rename: safe
+    commit:
+      templates:
+        create: 'media(site): add {filename}'
+        update: 'media(site): update {filename}'
+        delete: 'media(site): remove {filename}'
+        rename: 'media(site): rename {oldFilename} to {newFilename}'
+
+  - name: profile_images
+    label: صور الملف الشخصي
+    input: src/content/profile/images
+    output: ./images
+    extensions: [jpg, jpeg, png, webp, avif]
+    categories: [image]
+    rename: safe
+    commit:
+      templates:
+        create: 'media(profile): add {filename}'
+        update: 'media(profile): update {filename}'
+        delete: 'media(profile): remove {filename}'
+        rename: 'media(profile): rename {oldFilename} to {newFilename}'
+
+  - name: project_images
+    label: صور المشاريع
+    input: src/content/projects/images
+    output: ./images
+    extensions: [jpg, jpeg, png, webp, avif]
+    categories: [image]
+    rename: safe
+    commit:
+      templates:
+        create: 'media(projects): add {filename}'
+        update: 'media(projects): update {filename}'
+        delete: 'media(projects): remove {filename}'
+        rename: 'media(projects): rename {oldFilename} to {newFilename}'
+
+  - name: resume_files
+    label: ملف السيرة الذاتية
+    input: public/resume
+    output: /resume
+    extensions: [pdf]
+    categories: [document]
+    rename: safe
+    commit:
+      templates:
+        create: 'media(resume): add {filename}'
+        update: 'media(resume): update {filename}'
+        delete: 'media(resume): remove {filename}'
+        rename: 'media(resume): rename {oldFilename} to {newFilename}'
+
+components:
+  section_heading:
+    type: object
+    fields:
+      - name: eyebrow
+        label: العنوان الصغير
+        type: string
+        required: true
+      - name: title
+        label: العنوان
+        type: string
+        required: true
+      - name: description
+        label: الوصف
+        type: text
+        required: true
+
+content:
+  - name: site
+    label: إعدادات الموقع
+    type: file
+    path: src/content/site/site.yml
+    format: yaml
+    operations:
+      create: false
+      rename: false
+      delete: false
+    fields:
+      - name: siteUrl
+        label: رابط الموقع
+        type: string
+        required: true
+        description: الرابط النهائي كاملاً ويبدأ بـ https://
+        pattern:
+          regex: '^https://.+'
+          message: أدخل رابطاً يبدأ بـ https://
+      - name: siteName
+        label: اسم الموقع
+        type: string
+        required: true
+      - name: defaultTitle
+        label: عنوان المتصفح الافتراضي
+        type: string
+        required: true
+        options:
+          maxlength: 70
+      - name: defaultDescription
+        label: وصف محركات البحث الافتراضي
+        type: text
+        required: true
+        options:
+          maxlength: 170
+      - name: socialPreview
+        label: صورة المشاركة الافتراضية
+        type: object
+        description: اختيارية. تُقصّ تلقائياً إلى 1200×630 عند البناء.
+        fields:
+          - name: image
+            label: الصورة
+            type: image
+            required: true
+            options:
+              media: site_images
+              extensions: [jpg, jpeg, png, webp, avif]
+              rename: safe
+          - name: alt
+            label: وصف الصورة
+            type: string
+            required: true
+            description: وصف موجز ودقيق لقارئ الشاشة.
+      - name: language
+        label: لغة الموقع
+        type: select
+        required: true
+        options:
+          values:
+            - name: en
+              label: English
+      - name: brandRole
+        label: المسمى أسفل الاسم في الترويسة
+        type: string
+        required: true
+      - name: footerTagline
+        label: وصف التذييل
+        type: text
+        required: true
+      - name: backToTopLabel
+        label: نص العودة إلى الأعلى
+        type: string
+        required: true
+      - name: navigation
+        label: أسماء روابط القائمة
+        type: object
+        required: true
+        fields:
+          - { name: about, label: عني, type: string, required: true }
+          - { name: experience, label: الخبرة, type: string, required: true }
+          - { name: skills, label: المهارات, type: string, required: true }
+          - { name: work, label: الأعمال, type: string, required: true }
+          - { name: contact, label: التواصل, type: string, required: true }
+          - { name: resume, label: السيرة الذاتية, type: string, required: true }
+      - name: projectDetail
+        label: نصوص قالب المشروع
+        type: object
+        required: true
+        fields:
+          - {
+              name: breadcrumbAriaLabel,
+              label: وصف مسار التنقل لقارئ الشاشة,
+              type: string,
+              required: true,
+            }
+          - { name: homeLabel, label: نص رابط الرئيسية, type: string, required: true }
+          - { name: projectsLabel, label: نص رابط المشاريع, type: string, required: true }
+          - { name: kicker, label: العنوان الصغير, type: string, required: true }
+          - {
+              name: badgesAriaLabel,
+              label: وصف شارات المشروع لقارئ الشاشة,
+              type: string,
+              required: true,
+            }
+          - { name: readCaseStudyLabel, label: نص زر قراءة المشروع, type: string, required: true }
+          - { name: visitLiveLabel, label: نص زر المشروع المباشر, type: string, required: true }
+          - { name: viewSourceLabel, label: نص زر الشفرة المصدرية, type: string, required: true }
+          - {
+              name: summaryAriaLabel,
+              label: وصف ملخص المشروع لقارئ الشاشة,
+              type: string,
+              required: true,
+            }
+          - { name: contributionLabel, label: تسمية المساهمة, type: string, required: true }
+          - { name: statusLabel, label: تسمية الحالة, type: string, required: true }
+          - { name: availabilityLabel, label: تسمية الإتاحة, type: string, required: true }
+          - { name: technologyHeading, label: عنوان التقنيات, type: string, required: true }
+          - { name: capabilityHeading, label: عنوان القدرات, type: string, required: true }
+          - {
+              name: tocAriaLabel,
+              label: وصف فهرس الصفحة لقارئ الشاشة,
+              type: string,
+              required: true,
+            }
+          - { name: tocHeading, label: عنوان فهرس الصفحة, type: string, required: true }
+          - { name: galleryKicker, label: العنوان الصغير للمعرض, type: string, required: true }
+          - { name: galleryTitle, label: عنوان المعرض, type: string, required: true }
+          - { name: continueKicker, label: عنوان المتابعة الصغير, type: string, required: true }
+          - { name: continueTitle, label: عنوان المتابعة, type: string, required: true }
+          - { name: allProjectsLabel, label: نص زر كل المشاريع, type: string, required: true }
+          - { name: resumeLabel, label: نص زر السيرة, type: string, required: true }
+          - name: statuses
+            label: أسماء حالات المشروع
+            type: object
+            required: true
+            fields:
+              - { name: deployed, label: منشور أو مسلّم, type: string, required: true }
+              - { name: inDevelopment, label: قيد التطوير, type: string, required: true }
+              - { name: archived, label: مؤرشف, type: string, required: true }
+          - name: privacy
+            label: أسماء خصوصية المشروع
+            type: object
+            required: true
+            fields:
+              - { name: private, label: خاص, type: string, required: true }
+              - { name: public, label: عام, type: string, required: true }
+      - name: personJobTitles
+        label: المسميات المهنية لمحركات البحث
+        type: string
+        required: true
+        list:
+          min: 1
+      - name: personKnowsAbout
+        label: مجالات المعرفة لمحركات البحث
+        type: string
+        required: true
+        list:
+          min: 1
+
+  - name: home
+    label: الصفحة الرئيسية
+    type: file
+    path: src/content/home/home.yml
+    format: yaml
+    operations:
+      create: false
+      rename: false
+      delete: false
+    fields:
+      - name: hero
+        label: مقدمة الصفحة
+        type: object
+        required: true
+        fields:
+          - name: roles
+            label: المسميات الظاهرة
+            type: string
+            required: true
+            list:
+              min: 1
+          - { name: availabilityLabel, label: حالة التوفر, type: string, required: true }
+          - name: primaryProjectId
+            label: المشروع الرئيسي
+            type: reference
+            required: true
+            description: المشروع الذي يفتحه الزر الرئيسي.
+            options:
+              collection: projects
+              search: 'title,summary'
+              value: '{name}'
+              label: '{title}'
+          - { name: primaryActionLabel, label: نص زر المشروع, type: string, required: true }
+          - { name: resumeActionLabel, label: نص زر السيرة, type: string, required: true }
+          - { name: contactActionLabel, label: نص رابط التواصل, type: string, required: true }
+          - name: actionsAriaLabel
+            label: وصف الأزرار لقارئ الشاشة
+            type: string
+            required: true
+          - name: factsAriaLabel
+            label: وصف الملخص لقارئ الشاشة
+            type: string
+            required: true
+          - name: facts
+            label: الحقائق السريعة
+            type: object
+            required: true
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: '{label}'
+            fields:
+              - { name: label, label: الاسم, type: string, required: true }
+              - { name: value, label: القيمة, type: string, required: true }
+          - { name: visualLabel, label: نص البطاقة البصرية, type: string, required: true }
+          - { name: visualTopLabel, label: النص العلوي للبطاقة, type: string, required: true }
+          - { name: visualBottomLabel, label: النص السفلي للبطاقة, type: string, required: true }
+      - name: about
+        label: قسم النبذة
+        type: object
+        required: true
+        fields:
+          - { name: eyebrow, label: العنوان الصغير, type: string, required: true }
+          - { name: title, label: العنوان, type: string, required: true }
+          - { name: description, label: الوصف, type: text, required: true }
+          - name: aiLearningNote
+            label: توضيح تعلّم الذكاء الاصطناعي
+            type: text
+            required: true
+          - name: facts
+            label: ملخص المجالات
+            type: object
+            required: true
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: '{label}'
+            fields:
+              - { name: label, label: المجال, type: string, required: true }
+              - { name: value, label: التفاصيل, type: string, required: true }
+      - name: experience
+        label: عنوان قسم الخبرة
+        component: section_heading
+      - name: skills
+        label: عنوان قسم المهارات
+        component: section_heading
+      - name: featuredWork
+        label: قسم المشروع المميز
+        type: object
+        required: true
+        fields:
+          - { name: eyebrow, label: العنوان الصغير, type: string, required: true }
+          - { name: title, label: العنوان, type: string, required: true }
+          - { name: description, label: الوصف, type: text, required: true }
+          - name: projectId
+            label: المشروع
+            type: reference
+            required: true
+            options:
+              collection: projects
+              search: 'title,summary'
+              value: '{name}'
+              label: '{title}'
+          - { name: statusLabel, label: النص الظاهر لحالة المشروع, type: string, required: true }
+      - name: projectsPage
+        label: صفحة جميع المشاريع
+        type: object
+        required: true
+        fields:
+          - { name: title, label: عنوان المتصفح, type: string, required: true }
+          - { name: description, label: وصف محركات البحث, type: text, required: true }
+          - { name: eyebrow, label: العنوان الصغير, type: string, required: true }
+          - { name: heading, label: عنوان الصفحة, type: string, required: true }
+          - { name: emptyMessage, label: رسالة عدم وجود مشاريع, type: string, required: true }
+      - name: approach
+        label: قسم منهج العمل
+        type: object
+        required: true
+        fields:
+          - { name: eyebrow, label: العنوان الصغير, type: string, required: true }
+          - { name: title, label: العنوان, type: string, required: true }
+          - { name: description, label: الوصف, type: text, required: true }
+          - name: items
+            label: مبادئ العمل
+            type: object
+            required: true
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: '{title}'
+            fields:
+              - { name: title, label: العنوان, type: string, required: true }
+              - { name: body, label: الشرح, type: text, required: true }
+      - name: education
+        label: عنوان قسم التعليم
+        component: section_heading
+      - name: contact
+        label: قسم التواصل
+        type: object
+        required: true
+        fields:
+          - { name: eyebrow, label: العنوان الصغير, type: string, required: true }
+          - { name: title, label: العنوان, type: string, required: true }
+          - { name: description, label: النص, type: text, required: true }
+
+  - name: profile
+    label: الملف الشخصي والسيرة
+    type: file
+    path: src/content/profile/profile.yml
+    format: yaml
+    operations:
+      create: false
+      rename: false
+      delete: false
+    fields:
+      - { name: name, label: الاسم الكامل, type: string, required: true }
+      - name: initials
+        label: الأحرف المختصرة
+        type: string
+        required: true
+        options:
+          maxlength: 4
+      - name: roles
+        label: المسميات المهنية
+        type: string
+        required: true
+        list:
+          min: 1
+      - { name: headline, label: العنوان المهني, type: string, required: true }
+      - { name: valueProposition, label: القيمة المهنية, type: text, required: true }
+      - name: summary
+        label: فقرات النبذة
+        type: text
+        required: true
+        list:
+          min: 1
+      - { name: availability, label: نص التوفر للعمل, type: string, required: true }
+      - name: email
+        label: البريد الإلكتروني
+        type: string
+        required: true
+        pattern:
+          regex: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+          message: أدخل بريداً إلكترونياً صحيحاً.
+      - name: linkedin
+        label: رابط LinkedIn
+        type: string
+        required: true
+        pattern:
+          regex: '^https://.+'
+          message: أدخل رابطاً يبدأ بـ https://
+      - name: github
+        label: رابط GitHub
+        type: string
+        required: true
+        pattern:
+          regex: '^https://.+'
+          message: أدخل رابطاً يبدأ بـ https://
+      - name: portrait
+        label: الصورة الشخصية
+        type: object
+        description: اختيارية. للرفع المباشر عبر Pages CMS استخدم JPG أو PNG أو WebP أو AVIF حتى 4MB. يقبل الموقع حتى 8MB عند الرفع إلى مجلد الصور عبر GitHub.
+        fields:
+          - name: image
+            label: الصورة
+            type: image
+            required: true
+            options:
+              media: profile_images
+              extensions: [jpg, jpeg, png, webp, avif]
+              rename: safe
+          - name: alt
+            label: وصف الصورة
+            type: string
+            required: true
+            description: وصف موجز ودقيق لقارئ الشاشة.
+      - name: resumePdf
+        label: ملف السيرة PDF
+        type: file
+        description: اختياري. للرفع المباشر عبر Pages CMS استخدم PDF حتى 4MB. يقبل الموقع حتى 15MB عند الرفع إلى مجلد السيرة عبر GitHub.
+        options:
+          media: resume_files
+          extensions: [pdf]
+          categories: [document]
+          rename: safe
+      - name: education
+        label: التعليم
+        type: object
+        required: true
+        fields:
+          - { name: degree, label: الدرجة, type: string, required: true }
+          - { name: institution, label: المؤسسة, type: string, required: true }
+          - { name: location, label: الموقع, type: string, required: true }
+          - { name: status, label: الحالة, type: string, required: true }
+      - name: languages
+        label: اللغات
+        type: object
+        required: true
+        list:
+          min: 1
+          collapsible:
+            collapsed: true
+            summary: '{name}'
+        fields:
+          - { name: name, label: اللغة, type: string, required: true }
+          - { name: proficiency, label: المستوى, type: string, required: true }
+      - name: currentLearning
+        label: مواضيع التعلّم الحالية
+        type: string
+        required: true
+        list:
+          min: 1
+      - name: resume
+        label: نصوص صفحة السيرة
+        type: object
+        required: true
+        fields:
+          - { name: title, label: عنوان المتصفح, type: string, required: true }
+          - { name: description, label: وصف محركات البحث, type: text, required: true }
+          - name: displayedRoles
+            label: المسميات الظاهرة
+            type: string
+            required: true
+            list:
+              min: 1
+          - { name: emailActionLabel, label: نص زر البريد, type: string, required: true }
+          - { name: printActionLabel, label: نص زر الطباعة, type: string, required: true }
+          - { name: downloadActionLabel, label: نص زر تنزيل PDF, type: string, required: true }
+          - name: coreTechnologiesHeading
+            label: عنوان التقنيات الأساسية
+            type: string
+            required: true
+          - name: coreTechnologies
+            label: التقنيات الأساسية
+            type: string
+            required: true
+            list:
+              min: 1
+          - { name: educationHeading, label: عنوان التعليم, type: string, required: true }
+          - { name: languagesHeading, label: عنوان اللغات, type: string, required: true }
+          - name: professionalSummaryHeading
+            label: عنوان الملخص المهني
+            type: string
+            required: true
+          - name: professionalSummary
+            label: الملخص المهني
+            type: text
+            required: true
+          - { name: experienceHeading, label: عنوان الخبرة, type: string, required: true }
+          - { name: domainsLabel, label: تسمية المجالات, type: string, required: true }
+          - name: selectedProject
+            label: المشروع المختار
+            type: object
+            required: true
+            fields:
+              - { name: heading, label: عنوان القسم, type: string, required: true }
+              - name: projectId
+                label: المشروع
+                type: reference
+                required: true
+                options:
+                  collection: projects
+                  search: 'title,summary'
+                  value: '{name}'
+                  label: '{title}'
+              - { name: dateLabel, label: النص الجانبي, type: string, required: true }
+              - { name: roleLabel, label: وصف الحالة, type: string, required: true }
+              - name: paragraphs
+                label: الفقرات
+                type: text
+                required: true
+                list:
+                  min: 1
+          - { name: capabilitiesHeading, label: عنوان القدرات, type: string, required: true }
+          - { name: learningHeading, label: عنوان التعلّم الحالي, type: string, required: true }
+          - { name: learningNote, label: ملاحظة التعلّم, type: text, required: true }
+
+  - name: experiences
+    label: الخبرات
+    type: collection
+    path: src/content/experiences
+    format: yaml
+    subfolders: false
+    filename:
+      template: '{company}.yml'
+      field: create
+    operations:
+      create: true
+      rename: false
+      delete: true
+    view:
+      fields: [company, title, visible, order]
+      primary: company
+      sort: [order, company, startDate]
+      search: [company, title, summary]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - name: order
+        label: الترتيب
+        type: number
+        required: true
+        default: 10
+        description: الرقم الأصغر يظهر أولاً.
+        options:
+          min: 0
+          step: 10
+      - { name: visible, label: ظاهر في الموقع, type: boolean, default: true }
+      - { name: company, label: الشركة, type: string, required: true }
+      - { name: title, label: المسمى الوظيفي, type: string, required: true }
+      - name: startDate
+        label: تاريخ البداية
+        type: string
+        required: true
+        description: بالصيغة YYYY-MM، مثال 2023-11.
+        pattern:
+          regex: "^\\d{4}-(0[1-9]|1[0-2])$"
+          message: استخدم الصيغة YYYY-MM.
+      - name: endDate
+        label: تاريخ النهاية
+        type: string
+        description: اتركه فارغاً للعمل الحالي، أو استخدم YYYY-MM.
+        pattern:
+          regex: "^$|^\\d{4}-(0[1-9]|1[0-2])$"
+          message: اتركه فارغاً أو استخدم الصيغة YYYY-MM.
+      - { name: summary, label: الملخص, type: text, required: true }
+      - name: highlights
+        label: أبرز المسؤوليات والنتائج
+        type: text
+        required: true
+        list:
+          min: 1
+      - name: domains
+        label: المجالات
+        type: string
+        required: true
+        list:
+          min: 1
+
+  - name: skills
+    label: مجموعات المهارات
+    type: collection
+    path: src/content/skills
+    format: yaml
+    subfolders: false
+    filename:
+      template: '{title}.yml'
+      field: create
+    operations:
+      create: true
+      rename: false
+      delete: true
+    view:
+      fields: [title, kind, visible, order]
+      primary: title
+      sort: [order, title, kind]
+      search: [title, description, items]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - name: order
+        label: الترتيب
+        type: number
+        required: true
+        default: 10
+        description: الرقم الأصغر يظهر أولاً.
+        options:
+          min: 0
+          step: 10
+      - { name: visible, label: ظاهرة في الموقع, type: boolean, default: true }
+      - { name: title, label: اسم المجموعة, type: string, required: true }
+      - { name: description, label: الوصف, type: text }
+      - name: items
+        label: المهارات
+        type: string
+        required: true
+        list:
+          min: 1
+      - name: kind
+        label: نوع المجموعة
+        type: select
+        required: true
+        default: professional
+        options:
+          values:
+            - { name: professional, label: خبرة مهنية }
+            - { name: tooling, label: أدوات وتقنيات }
+            - { name: learning, label: تعلّم حالي }
+
+  - name: projects
+    label: المشاريع
+    type: collection
+    path: src/content/projects
+    format: yaml-frontmatter
+    subfolders: false
+    filename:
+      template: '{title}.md'
+      field: create
+    operations:
+      create: true
+      rename: false
+      delete: true
+    view:
+      fields: [title, published, featured, status, order]
+      primary: title
+      sort: [order, title, status]
+      search: [title, summary, role, technologies, capabilities]
+      default:
+        sort: order
+        order: asc
+    fields:
+      - { name: title, label: اسم المشروع, type: string, required: true }
+      - name: summary
+        label: الملخص
+        type: text
+        required: true
+        options:
+          maxlength: 240
+      - name: role
+        label: الدور
+        type: string
+        required: true
+        description: اكتب الدور المثبت فقط، ولا توسّع نطاق المساهمة من دون دليل.
+      - name: published
+        label: منشور
+        type: boolean
+        default: false
+        description: يبدأ المشروع مخفياً. فعّل هذا الخيار فقط عندما يصبح جاهزاً للعرض العام.
+      - { name: featured, label: مشروع مميز, type: boolean, default: false }
+      - name: order
+        label: الترتيب
+        type: number
+        required: true
+        default: 0
+        description: الرقم الأصغر يظهر أولاً.
+        options:
+          min: 0
+          step: 10
+      - name: status
+        label: الحالة
+        type: select
+        required: true
+        default: in-development
+        options:
+          values:
+            - { name: deployed, label: منشور أو مسلّم }
+            - { name: in-development, label: قيد التطوير }
+            - { name: archived, label: مؤرشف }
+      - name: privacy
+        label: خصوصية الشفرة
+        type: select
+        required: true
+        default: private
+        options:
+          values:
+            - { name: public, label: عامة }
+            - { name: private, label: خاصة }
+      - name: technologies
+        label: التقنيات
+        type: string
+        required: true
+        list:
+          min: 1
+      - name: capabilities
+        label: القدرات والمجالات
+        type: string
+        required: true
+        list:
+          min: 1
+      - name: cover
+        label: صورة الغلاف
+        type: object
+        description: اختيارية. للرفع المباشر عبر Pages CMS استخدم JPG أو PNG أو WebP أو AVIF حتى 4MB. يقبل الموقع حتى 8MB عند الرفع إلى مجلد صور المشاريع عبر GitHub.
+        fields:
+          - name: image
+            label: الصورة
+            type: image
+            required: true
+            options:
+              media: project_images
+              extensions: [jpg, jpeg, png, webp, avif]
+              rename: safe
+          - name: alt
+            label: وصف الصورة
+            type: string
+            required: true
+            description: النص البديل إلزامي عند اختيار صورة.
+      - name: gallery
+        label: معرض الصور
+        type: object
+        list:
+          max: 12
+          collapsible:
+            collapsed: true
+            summary: '{caption}'
+        fields:
+          - name: image
+            label: الصورة
+            type: image
+            required: true
+            options:
+              media: project_images
+              extensions: [jpg, jpeg, png, webp, avif]
+              rename: safe
+          - { name: alt, label: وصف الصورة, type: string, required: true }
+          - { name: caption, label: التعليق, type: string }
+      - name: links
+        label: روابط المشروع
+        type: object
+        fields:
+          - name: live
+            label: رابط العرض المباشر
+            type: string
+            pattern:
+              regex: '^$|^https://.+'
+              message: اتركه فارغاً أو أدخل رابطاً يبدأ بـ https://
+          - name: source
+            label: رابط الشفرة المصدرية
+            type: string
+            pattern:
+              regex: '^$|^https://.+'
+              message: اتركه فارغاً أو أدخل رابطاً يبدأ بـ https://
+      - name: seo
+        label: إعدادات محركات البحث
+        type: object
+        fields:
+          - name: title
+            label: العنوان
+            type: string
+            options:
+              maxlength: 70
+          - name: description
+            label: الوصف
+            type: text
+            options:
+              maxlength: 170
+      - name: body
+        label: محتوى دراسة الحالة
+        type: rich-text
+        required: true
+        description: اكتب المحتوى المثبت فقط. يمكن إضافة الصور من مكتبة صور المشاريع.
+        options:
+          media: project_images
+
+settings:
+  hide: true
+  content:
+    merge: true
+  commit:
+    identity: user
+    templates:
+      create: 'content: add {name}'
+      update: 'content: update {name}'
+      delete: 'content: remove {name}'
+      rename: 'content: rename {oldPath} to {newPath}'

@@ -1,0 +1,90 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  title: string;
+  role: string;
+  summary: string;
+  status: string;
+  capabilities: readonly string[];
+  href: string;
+  privacy: 'public' | 'private';
+  featured?: boolean;
+  index?: number;
+  cover?: {
+    image: ImageMetadata;
+    alt: string;
+  };
+}
+
+const {
+  title,
+  role,
+  summary,
+  status,
+  capabilities,
+  href,
+  privacy,
+  featured = false,
+  index = 1,
+  cover,
+} = Astro.props;
+
+const privacyLabel = privacy === 'private' ? 'Private project' : 'Public project';
+const evidenceNote =
+  privacy === 'private'
+    ? 'Production UI or source code may be private. The case study uses disclosed, publication-safe material.'
+    : 'Public links and source material are shown only when they are available and verified.';
+---
+
+<article class="project-card">
+  <div
+    class:list={['project-card__visual', { 'project-card__visual--cover': cover }]}
+    aria-hidden={cover ? undefined : 'true'}
+  >
+    {
+      cover ? (
+        <Image
+          class="project-card__image"
+          src={cover.image}
+          alt={cover.alt}
+          widths={[480, 720, 960]}
+          sizes="(max-width: 58rem) 100vw, 44vw"
+          loading="lazy"
+        />
+      ) : (
+        <>
+          <div class="project-grid-lines" />
+          <span class="project-code">{String(index).padStart(2, '0')}</span>
+          <span class="project-wordmark">{title}</span>
+          <svg viewBox="0 0 360 220" role="presentation">
+            <path d="M42 156h72l31-72 42 93 31-54h100" />
+            <circle cx="114" cy="156" r="7" />
+            <circle cx="145" cy="84" r="7" />
+            <circle cx="187" cy="177" r="7" />
+            <circle cx="218" cy="123" r="7" />
+          </svg>
+        </>
+      )
+    }
+  </div>
+  <div class="project-card__content">
+    <div class="project-card__meta">
+      <span>{status}</span>
+      <span>{privacyLabel}</span>
+    </div>
+    <p class="eyebrow">{featured ? 'Featured case study' : 'Project case study'}</p>
+    <h3>{title}</h3>
+    <p class="project-role">{role}</p>
+    <p>{summary}</p>
+    <ul class="project-capabilities" aria-label={`${title} capability areas`}>
+      {capabilities.map((capability) => <li>{capability}</li>)}
+    </ul>
+    <a class="arrow-link" href={href}>
+      Read the engineering case study
+      <span aria-hidden="true">↗</span>
+    </a>
+    <p class="evidence-note">{evidenceNote}</p>
+  </div>
+</article>

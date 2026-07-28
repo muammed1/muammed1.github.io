@@ -1,0 +1,11 @@
+order: 30
+visible: true
+title: Application design and delivery
+items:
+  - Business and requirements analysis
+  - Business workflow design
+  - Software architecture
+  - SaaS development
+  - Client communication
+  - Hardware integration
+kind: professional

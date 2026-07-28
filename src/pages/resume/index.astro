@@ -1,0 +1,228 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const [profileEntry, experienceEntries, skillEntries, projectEntries] = await Promise.all([
+  getEntry('profile', 'profile'),
+  getCollection('experiences'),
+  getCollection('skills'),
+  getCollection('projects'),
+]);
+
+if (!profileEntry) {
+  throw new Error('Missing required profile content entry "profile".');
+}
+
+const profile = profileEntry.data;
+const resume = profile.resume;
+
+const experiences = experienceEntries
+  .filter((entry) => entry.data.visible)
+  .sort((a, b) => a.data.order - b.data.order || a.id.localeCompare(b.id))
+  .map((entry) => entry.data);
+
+const skillGroups = skillEntries
+  .filter((entry) => entry.data.visible)
+  .sort((a, b) => a.data.order - b.data.order || a.id.localeCompare(b.id))
+  .map((entry) => entry.data);
+
+const professionalGroups = skillGroups.filter((group) => group.kind !== 'learning');
+const learningGroups = skillGroups.filter((group) => group.kind === 'learning');
+const selectedProject = projectEntries.find(
+  (entry) => entry.id === resume.selectedProject.projectId && entry.data.published,
+);
+
+const formatMonth = (value: string | null) => {
+  if (!value) return 'Present';
+  const [yearPart, monthPart] = value.split('-');
+  return new Intl.DateTimeFormat('en', {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(Number(yearPart), Number(monthPart ?? '1') - 1, 1)));
+};
+
+const getProfileLabel = (value: string, fallback: string) => {
+  try {
+    const url = new URL(value);
+    return url.pathname.replace(/^\/|\/$/g, '') || fallback;
+  } catch {
+    return fallback;
+  }
+};
+---
+
+<BaseLayout
+  title={resume.title}
+  description={resume.description}
+  canonicalPath="/resume/"
+  pageClass="resume-page"
+>
+  <section class="section--compact" aria-labelledby="resume-name">
+    <div class="container">
+      <div class="resume-actions" aria-label="Resume actions">
+        <a class="button button--secondary" href={`mailto:${profile.email}`}>
+          {resume.emailActionLabel}
+        </a>
+        {
+          profile.resumePdf && (
+            <a class="button button--secondary" href={profile.resumePdf} download>
+              {resume.downloadActionLabel}
+            </a>
+          )
+        }
+        <button class="button button--primary print-button" type="button" data-print>
+          {resume.printActionLabel}
+        </button>
+      </div>
+
+      <div class="resume-shell">
+        <aside class="resume-sidebar" aria-label="Resume profile and contact">
+          <div class="resume-monogram" aria-hidden="true">{profile.initials}</div>
+          <h1 id="resume-name">{profile.name}</h1>
+          <p class="resume-title">{resume.displayedRoles.join(' · ')}</p>
+
+          <ul class="resume-contact">
+            <li><a href={`mailto:${profile.email}`}>{profile.email}</a></li>
+            <li>
+              <a
+                href={profile.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn profile (opens in a new tab)"
+              >
+                {getProfileLabel(profile.linkedin, 'LinkedIn')}
+              </a>
+            </li>
+            <li>
+              <a
+                href={profile.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub profile (opens in a new tab)"
+              >
+                {getProfileLabel(profile.github, 'GitHub')}
+              </a>
+            </li>
+          </ul>
+
+          <h2>{resume.coreTechnologiesHeading}</h2>
+          <ul class="tag-list">
+            {resume.coreTechnologies.map((technology) => <li>{technology}</li>)}
+          </ul>
+
+          <h2>{resume.educationHeading}</h2>
+          <p>
+            <strong>{profile.education.degree}</strong><br />
+            {profile.education.institution}<br />
+            {profile.education.location}<br />
+            <span class="status-label">{profile.education.status}</span>
+          </p>
+
+          <h2>{resume.languagesHeading}</h2>
+          <ul>
+            {
+              profile.languages.map((language) => (
+                <li>
+                  {language.name} — {language.proficiency}
+                </li>
+              ))
+            }
+          </ul>
+        </aside>
+
+        <div class="resume-main">
+          <section class="resume-section" aria-labelledby="resume-summary">
+            <h2 id="resume-summary">{resume.professionalSummaryHeading}</h2>
+            <p>{resume.professionalSummary}</p>
+          </section>
+
+          {
+            experiences.length > 0 && (
+              <section class="resume-section" aria-labelledby="resume-experience">
+                <h2 id="resume-experience">{resume.experienceHeading}</h2>
+                {experiences.map((experience) => (
+                  <article class="resume-entry">
+                    <p class="resume-entry__date">
+                      {formatMonth(experience.startDate)} — {formatMonth(experience.endDate)}
+                    </p>
+                    <div>
+                      <h3>{experience.title}</h3>
+                      <p class="resume-entry__company">{experience.company}</p>
+                      <p>{experience.summary}</p>
+                      <ul>
+                        {experience.highlights.map((highlight) => (
+                          <li>{highlight}</li>
+                        ))}
+                      </ul>
+                      {experience.domains.length > 0 && (
+                        <p>
+                          <strong>{resume.domainsLabel}:</strong> {experience.domains.join(', ')}.
+                        </p>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </section>
+            )
+          }
+
+          {
+            selectedProject && (
+              <section class="resume-section" aria-labelledby="resume-project">
+                <h2 id="resume-project">{resume.selectedProject.heading}</h2>
+                <article class="resume-entry">
+                  <p class="resume-entry__date">{resume.selectedProject.dateLabel}</p>
+                  <div>
+                    <h3>{selectedProject.data.title}</h3>
+                    <p class="resume-entry__company">{resume.selectedProject.roleLabel}</p>
+                    {resume.selectedProject.paragraphs.map((paragraph) => (
+                      <p>{paragraph}</p>
+                    ))}
+                  </div>
+                </article>
+              </section>
+            )
+          }
+
+          {
+            professionalGroups.length > 0 && (
+              <section class="resume-section" aria-labelledby="resume-capabilities">
+                <h2 id="resume-capabilities">{resume.capabilitiesHeading}</h2>
+                {professionalGroups.map((group) => (
+                  <div>
+                    <h3>{group.title}</h3>
+                    <p>{group.items.join(' · ')}</p>
+                  </div>
+                ))}
+              </section>
+            )
+          }
+
+          <section class="resume-section" aria-labelledby="resume-learning">
+            <h2 id="resume-learning">{resume.learningHeading}</h2>
+            <p>{resume.learningNote}</p>
+            {
+              learningGroups.length > 0 ? (
+                learningGroups.map((group) => (
+                  <div>
+                    <h3>{group.title}</h3>
+                    <p>{group.items.join(' · ')}</p>
+                  </div>
+                ))
+              ) : (
+                <p>{profile.currentLearning.join(' · ')}</p>
+              )
+            }
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.querySelector<HTMLButtonElement>('[data-print]')?.addEventListener('click', () => {
+      window.print();
+    });
+  </script>
+</BaseLayout>

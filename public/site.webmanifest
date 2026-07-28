@@ -1,0 +1,19 @@
+{
+  "name": "Mohammad Zeno — Software Engineer",
+  "short_name": "Mohammad Zeno",
+  "description": "The engineering portfolio of Mohammad Zeno.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#07111f",
+  "theme_color": "#07111f",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

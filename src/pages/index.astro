@@ -1,0 +1,277 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import ContactLinks from '../components/ContactLinks.astro';
+import ExperienceTimeline from '../components/ExperienceTimeline.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import SkillGroup from '../components/SkillGroup.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const [siteEntry, homeEntry, profileEntry, experienceEntries, skillEntries, projectEntries] =
+  await Promise.all([
+    getEntry('site', 'site'),
+    getEntry('home', 'home'),
+    getEntry('profile', 'profile'),
+    getCollection('experiences'),
+    getCollection('skills'),
+    getCollection('projects'),
+  ]);
+
+if (!siteEntry) {
+  throw new Error('Missing required site content entry "site".');
+}
+
+if (!homeEntry) {
+  throw new Error('Missing required home content entry "home".');
+}
+
+if (!profileEntry) {
+  throw new Error('Missing required profile content entry "profile".');
+}
+
+const site = siteEntry.data;
+const home = homeEntry.data;
+const profile = profileEntry.data;
+
+const experiences = experienceEntries
+  .filter((entry) => entry.data.visible)
+  .sort((a, b) => a.data.order - b.data.order || a.id.localeCompare(b.id))
+  .map((entry) => entry.data);
+
+const skillGroups = skillEntries
+  .filter((entry) => entry.data.visible)
+  .sort((a, b) => a.data.order - b.data.order || a.id.localeCompare(b.id))
+  .map((entry) => entry.data);
+
+const publishedProjects = projectEntries
+  .filter((entry) => entry.data.published)
+  .sort((a, b) => a.data.order - b.data.order || a.data.title.localeCompare(b.data.title));
+
+const featuredProjects = publishedProjects.filter((entry) => entry.data.featured);
+const primaryProject = publishedProjects.find((entry) => entry.id === home.hero.primaryProjectId);
+
+const statusLabels = {
+  deployed: 'Deployed',
+  'in-development': 'In development',
+  archived: 'Archived',
+} as const;
+
+const educationMark =
+  profile.education.degree
+    .match(/\b[A-Z]/g)
+    ?.slice(-2)
+    .join('') || profile.initials;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: profile.name,
+    url: site.siteUrl,
+    email: `mailto:${profile.email}`,
+    jobTitle: site.personJobTitles,
+    sameAs: [profile.linkedin, profile.github],
+    knowsAbout: site.personKnowsAbout,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: site.siteName,
+    url: site.siteUrl,
+    description: site.defaultDescription,
+    inLanguage: site.language,
+  },
+];
+---
+
+<BaseLayout
+  title={site.defaultTitle}
+  description={site.defaultDescription}
+  canonicalPath="/"
+  type="profile"
+  {jsonLd}
+>
+  <Hero
+    name={profile.name}
+    initials={profile.initials}
+    roles={home.hero.roles}
+    headline={profile.headline}
+    valueProposition={profile.valueProposition}
+    availability={home.hero.availabilityLabel}
+    email={profile.email}
+    primaryAction={primaryProject
+      ? {
+          label: home.hero.primaryActionLabel,
+          href: `/projects/${primaryProject.id}/`,
+        }
+      : undefined}
+    resumeActionLabel={home.hero.resumeActionLabel}
+    contactActionLabel={home.hero.contactActionLabel}
+    actionsAriaLabel={home.hero.actionsAriaLabel}
+    factsAriaLabel={home.hero.factsAriaLabel}
+    facts={home.hero.facts}
+    visualLabel={home.hero.visualLabel}
+    visualTopLabel={home.hero.visualTopLabel}
+    visualBottomLabel={home.hero.visualBottomLabel}
+    portrait={profile.portrait}
+  />
+
+  <section id="about" class="section--surface" aria-labelledby="about-heading">
+    <div class="container">
+      <SectionHeading
+        id="about-heading"
+        eyebrow={home.about.eyebrow}
+        title={home.about.title}
+        description={home.about.description}
+      />
+      <div class="about-grid">
+        <div class="summary-copy">
+          {profile.summary.map((paragraph) => <p>{paragraph}</p>)}
+          <p>{home.about.aiLearningNote}</p>
+        </div>
+        <dl class="fact-stack">
+          {
+            home.about.facts.map((fact) => (
+              <div>
+                <dt>{fact.label}</dt>
+                <dd>{fact.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  {
+    experiences.length > 0 && (
+      <section id="experience" aria-labelledby="experience-heading">
+        <div class="container">
+          <SectionHeading
+            id="experience-heading"
+            eyebrow={home.experience.eyebrow}
+            title={home.experience.title}
+            description={home.experience.description}
+          />
+          <ExperienceTimeline {experiences} />
+        </div>
+      </section>
+    )
+  }
+
+  {
+    skillGroups.length > 0 && (
+      <section id="skills" class="section--surface" aria-labelledby="skills-heading">
+        <div class="container">
+          <SectionHeading
+            id="skills-heading"
+            eyebrow={home.skills.eyebrow}
+            title={home.skills.title}
+            description={home.skills.description}
+          />
+          <div class="skills-grid">
+            {skillGroups.map((group) => (
+              <SkillGroup {...group} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    featuredProjects.length > 0 && (
+      <section id="work" aria-labelledby="work-heading">
+        <div class="container">
+          <SectionHeading
+            id="work-heading"
+            eyebrow={home.featuredWork.eyebrow}
+            title={home.featuredWork.title}
+            description={home.featuredWork.description}
+          />
+          <div class="featured-projects">
+            {featuredProjects.map((project, index) => (
+              <ProjectCard
+                title={project.data.title}
+                role={project.data.role}
+                summary={project.data.summary}
+                status={
+                  project.id === home.featuredWork.projectId
+                    ? home.featuredWork.statusLabel
+                    : statusLabels[project.data.status]
+                }
+                capabilities={project.data.capabilities}
+                href={`/projects/${project.id}/`}
+                privacy={project.data.privacy}
+                featured={project.data.featured}
+                index={index + 1}
+                cover={project.data.cover}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section--surface" aria-labelledby="approach-heading">
+    <div class="container">
+      <SectionHeading
+        id="approach-heading"
+        eyebrow={home.approach.eyebrow}
+        title={home.approach.title}
+        description={home.approach.description}
+      />
+      <div class="approach-grid">
+        {
+          home.approach.items.map((item) => (
+            <article class="approach-card">
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="education-heading">
+    <div class="container">
+      <SectionHeading
+        id="education-heading"
+        eyebrow={home.education.eyebrow}
+        title={home.education.title}
+        description={home.education.description}
+      />
+      <article class="education-card">
+        <div class="education-mark" aria-hidden="true">{educationMark}</div>
+        <div>
+          <h3>{profile.education.degree}</h3>
+          <p>{profile.education.institution} · {profile.education.location}</p>
+        </div>
+        <span class="status-label">{profile.education.status}</span>
+      </article>
+    </div>
+  </section>
+
+  <section id="contact" class="section--compact" aria-labelledby="contact-heading">
+    <div class="container">
+      <div class="contact-panel">
+        <div class="contact-panel__copy">
+          <p class="eyebrow">{home.contact.eyebrow}</p>
+          <h2 id="contact-heading">{home.contact.title}</h2>
+          <p>{home.contact.description}</p>
+        </div>
+        <ContactLinks email={profile.email} linkedin={profile.linkedin} github={profile.github} />
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .featured-projects {
+      display: grid;
+      gap: clamp(1.5rem, 4vw, 3rem);
+    }
+  </style>
+</BaseLayout>

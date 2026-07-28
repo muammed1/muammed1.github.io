@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="820" viewBox="0 0 1200 820" role="img" aria-labelledby="attendance-flow-title attendance-flow-description">
+  <title id="attendance-flow-title">Gymbo attendance synchronization and reporting flow</title>
+  <desc id="attendance-flow-description">A six-step workflow illustration. A dedicated service reaches a Dahua attendance device, polls raw logs, maps a device user to an internal subscriber, persists the attendance record idempotently, evaluates or flags subscription eligibility, and makes the stored record available to reporting views. The protocol, schedule, retry behavior, and physical access control are undocumented.</desc>
+  <defs>
+    <linearGradient id="panel" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#0d2531"/>
+      <stop offset="1" stop-color="#091a24"/>
+    </linearGradient>
+    <linearGradient id="highlight" x1="0" x2="1">
+      <stop offset="0" stop-color="#123a43"/>
+      <stop offset="1" stop-color="#0d2a34"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-30%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#020a0f" flood-opacity=".42"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 10 5 0 10Z" fill="#5ce1d8"/>
+    </marker>
+    <style>
+      .eyebrow { fill: #79eee5; font: 700 14px ui-monospace, "Cascadia Code", monospace; letter-spacing: 2.3px; }
+      .title { fill: #f2fbfc; font: 700 29px system-ui, -apple-system, "Segoe UI", sans-serif; }
+      .step { fill: #79eee5; font: 700 14px ui-monospace, "Cascadia Code", monospace; letter-spacing: 1.5px; }
+      .label { fill: #eef9fb; font: 650 21px system-ui, -apple-system, "Segoe UI", sans-serif; }
+      .copy { fill: #aac1ca; font: 400 15px system-ui, -apple-system, "Segoe UI", sans-serif; }
+      .micro { fill: #91abb5; font: 500 13px system-ui, -apple-system, "Segoe UI", sans-serif; }
+      .card { fill: url(#panel); stroke: #31505d; stroke-width: 1.5; }
+      .card-accent { fill: url(#highlight); stroke: #4ab9b6; stroke-width: 1.5; }
+      .connector { fill: none; stroke: #5ce1d8; stroke-width: 2.5; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1200" height="820" rx="28" fill="#07141d"/>
+  <path d="M0 145H1200M0 405H1200M0 705H1200" stroke="#18313c" stroke-width="1" opacity=".36"/>
+  <text x="64" y="66" class="eyebrow">DOCUMENTED ATTENDANCE WORKFLOW</text>
+  <text x="64" y="107" class="title">From device logs to report-ready attendance</text>
+
+  <g filter="url(#shadow)">
+    <rect x="64" y="174" width="300" height="150" rx="20" class="card"/>
+    <circle cx="110" cy="216" r="23" fill="#143b45" stroke="#5ce1d8"/>
+    <text x="110" y="221" text-anchor="middle" class="step">01</text>
+    <text x="148" y="216" class="label">Reach the device</text>
+    <text x="92" y="263" class="copy">Dedicated integration service</text>
+    <text x="92" y="288" class="copy">connects to a Dahua device.</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="450" y="174" width="300" height="150" rx="20" class="card"/>
+    <circle cx="496" cy="216" r="23" fill="#143b45" stroke="#5ce1d8"/>
+    <text x="496" y="221" text-anchor="middle" class="step">02</text>
+    <text x="534" y="216" class="label">Poll raw logs</text>
+    <text x="478" y="263" class="copy">Attendance events are pulled;</text>
+    <text x="478" y="288" class="copy">the schedule is undocumented.</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="836" y="174" width="300" height="150" rx="20" class="card-accent"/>
+    <circle cx="882" cy="216" r="23" fill="#17414a" stroke="#79eee5"/>
+    <text x="882" y="221" text-anchor="middle" class="step">03</text>
+    <text x="920" y="216" class="label">Map identity</text>
+    <text x="864" y="263" class="copy">Device user is associated with</text>
+    <text x="864" y="288" class="copy">an internal subscriber record.</text>
+  </g>
+
+  <path d="M364 249H438" class="connector"/>
+  <path d="M750 249H824" class="connector"/>
+
+  <path d="M986 324V380C986 398 972 412 954 412H246C228 412 214 426 214 444V466" class="connector"/>
+
+  <g filter="url(#shadow)">
+    <rect x="64" y="478" width="300" height="162" rx="20" class="card-accent"/>
+    <circle cx="110" cy="522" r="23" fill="#17414a" stroke="#79eee5"/>
+    <text x="110" y="527" text-anchor="middle" class="step">04</text>
+    <text x="148" y="522" class="label">Persist safely</text>
+    <text x="92" y="569" class="copy">First-or-create behavior makes</text>
+    <text x="92" y="594" class="copy">re-polling duplicate-safe.</text>
+    <text x="92" y="618" class="micro">Exact identity key is undocumented.</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="450" y="478" width="300" height="162" rx="20" class="card"/>
+    <circle cx="496" cy="522" r="23" fill="#143b45" stroke="#5ce1d8"/>
+    <text x="496" y="527" text-anchor="middle" class="step">05</text>
+    <text x="534" y="522" class="label">Evaluate eligibility</text>
+    <text x="478" y="569" class="copy">Subscription status is evaluated</text>
+    <text x="478" y="594" class="copy">or flagged for application use.</text>
+    <text x="478" y="618" class="micro">No physical gate-control claim.</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="836" y="478" width="300" height="162" rx="20" class="card"/>
+    <circle cx="882" cy="522" r="23" fill="#143b45" stroke="#5ce1d8"/>
+    <text x="882" y="527" text-anchor="middle" class="step">06</text>
+    <text x="920" y="522" class="label">Support reporting</text>
+    <text x="864" y="569" class="copy">Stored attendance can feed views,</text>
+    <text x="864" y="594" class="copy">screens, and report exports.</text>
+  </g>
+
+  <path d="M364 559H438" class="connector"/>
+  <path d="M750 559H824" class="connector"/>
+
+  <rect x="64" y="712" width="1072" height="58" rx="15" fill="#0b202b" stroke="#294753"/>
+  <circle cx="92" cy="741" r="5" fill="#5ce1d8"/>
+  <text x="112" y="746" class="micro">Boundary note: transport protocol, authentication, retries, device models, and physical access control are not documented.</text>
+  <text x="64" y="798" class="micro">Workflow illustration — polling is supported; “real-time synchronization” is intentionally not claimed</text>
+</svg>

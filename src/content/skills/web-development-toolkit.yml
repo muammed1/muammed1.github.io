@@ -1,0 +1,17 @@
+order: 40
+visible: true
+title: Web and development toolkit
+description: >-
+  Documented technologies and tools; proficiency is not implied beyond the evidence shown
+  elsewhere.
+items:
+  - Blade
+  - Bootstrap
+  - JavaScript
+  - HTML
+  - CSS
+  - Git
+  - Composer
+  - npm
+  - Vite
+kind: tooling

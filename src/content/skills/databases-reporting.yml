@@ -1,0 +1,11 @@
+order: 20
+visible: true
+title: Databases and reporting
+items:
+  - MySQL
+  - Oracle Database
+  - SQL
+  - Relational database design
+  - Database views and reporting systems
+  - Financial-system logic
+kind: professional
