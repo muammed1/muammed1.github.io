@@ -45,7 +45,7 @@ const links = [
         <a
           href={link.href}
           target={link.external ? '_blank' : undefined}
-          rel={link.external ? 'noreferrer' : undefined}
+          rel={link.external ? 'noopener noreferrer' : undefined}
           aria-label={
             link.external ? `${link.label}: ${link.value} (opens in a new tab)` : undefined
           }

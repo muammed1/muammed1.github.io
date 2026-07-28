@@ -43,6 +43,9 @@ jobs:
       - name: Validate managed content and media
         run: npm run validate:content
 
+      - name: Audit files and Git history for public release
+        run: npm run audit:public
+
       - name: Check Astro and TypeScript
         run: npm run check
 
