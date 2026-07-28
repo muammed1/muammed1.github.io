@@ -1,0 +1,21 @@
+---
+interface Props {
+  title: string;
+  items: readonly string[];
+  description?: string;
+  kind?: 'professional' | 'tooling' | 'learning';
+}
+
+const { title, items, description, kind = 'professional' } = Astro.props;
+---
+
+<article class:list={['skill-group', `skill-group--${kind}`]}>
+  <header>
+    <span class="skill-index" aria-hidden="true">{kind === 'learning' ? '↗' : '•'}</span>
+    <h3>{title}</h3>
+  </header>
+  {description && <p>{description}</p>}
+  <ul>
+    {items.map((item) => <li>{item}</li>)}
+  </ul>
+</article>

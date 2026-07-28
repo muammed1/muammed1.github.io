@@ -1,0 +1,67 @@
+---
+interface Experience {
+  company: string;
+  title: string;
+  startDate: string;
+  endDate: string | null;
+  summary: string;
+  highlights: readonly string[];
+  domains?: readonly string[];
+}
+
+interface Props {
+  experiences: readonly Experience[];
+}
+
+const { experiences } = Astro.props;
+
+const formatMonth = (value: string | null) => {
+  if (!value) return 'Present';
+  const [yearPart, monthPart] = value.split('-');
+  const year = Number(yearPart);
+  const month = Number(monthPart ?? '1');
+  return new Intl.DateTimeFormat('en', {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(year, month - 1, 1)));
+};
+---
+
+<ol class="timeline">
+  {
+    experiences.map((experience) => (
+      <li class="timeline-item">
+        <div class="timeline-marker" aria-hidden="true" />
+        <article class="timeline-card">
+          <header>
+            <div>
+              <p class="timeline-company">{experience.company}</p>
+              <h3>{experience.title}</h3>
+            </div>
+            <p class="timeline-date">
+              <time datetime={experience.startDate}>{formatMonth(experience.startDate)}</time>
+              <span aria-hidden="true">—</span>
+              <time datetime={experience.endDate ?? undefined}>
+                {formatMonth(experience.endDate)}
+              </time>
+            </p>
+          </header>
+          <p>{experience.summary}</p>
+          <ul class="check-list">
+            {experience.highlights.map((highlight) => (
+              <li>{highlight}</li>
+            ))}
+          </ul>
+          {experience.domains && (
+            <div class="domain-list" aria-label="Healthcare domains">
+              {experience.domains.map((domain) => (
+                <span>{domain}</span>
+              ))}
+            </div>
+          )}
+        </article>
+      </li>
+    ))
+  }
+</ol>

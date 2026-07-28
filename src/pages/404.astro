@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const title = 'Page not found — Mohammad Zeno';
+const description = 'The requested page could not be found.';
+---
+
+<BaseLayout {title} {description} canonicalPath="/404.html" noindex>
+  <section class="not-found" aria-labelledby="not-found-heading">
+    <div class="container not-found__inner">
+      <p class="not-found__code" aria-hidden="true">404</p>
+      <p class="eyebrow">Route not found</p>
+      <h1 id="not-found-heading">This path doesn’t map to a page.</h1>
+      <p>
+        The address may have changed, or the page may never have existed. The portfolio home page is
+        the best place to continue.
+      </p>
+      <a class="button button--primary" href="/">Return to the portfolio</a>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,48 @@
+---
+interface Props {
+  title: string;
+  role: string;
+  summary: string;
+  status: string;
+  capabilities: readonly string[];
+  href: string;
+}
+
+const { title, role, summary, status, capabilities, href } = Astro.props;
+---
+
+<article class="project-card">
+  <div class="project-card__visual" aria-hidden="true">
+    <div class="project-grid-lines"></div>
+    <span class="project-code">01</span>
+    <span class="project-wordmark">{title}</span>
+    <svg viewBox="0 0 360 220" role="presentation">
+      <path d="M42 156h72l31-72 42 93 31-54h100"></path>
+      <circle cx="114" cy="156" r="7"></circle>
+      <circle cx="145" cy="84" r="7"></circle>
+      <circle cx="187" cy="177" r="7"></circle>
+      <circle cx="218" cy="123" r="7"></circle>
+    </svg>
+  </div>
+  <div class="project-card__content">
+    <div class="project-card__meta">
+      <span>{status}</span>
+      <span>Private commercial project</span>
+    </div>
+    <p class="eyebrow">Featured case study</p>
+    <h3>{title}</h3>
+    <p class="project-role">{role}</p>
+    <p>{summary}</p>
+    <ul class="project-capabilities" aria-label={`${title} capability areas`}>
+      {capabilities.map((capability) => <li>{capability}</li>)}
+    </ul>
+    <a class="arrow-link" href={href}>
+      Read the engineering case study
+      <span aria-hidden="true">↗</span>
+    </a>
+    <p class="evidence-note">
+      Production UI and source code are private. The case study uses documented facts and technical
+      illustrations—not fabricated screenshots.
+    </p>
+  </div>
+</article>

@@ -1,0 +1,93 @@
+---
+const pathname = Astro.url.pathname;
+const isHome = pathname === '/';
+
+const navItems = [
+  { label: 'About', href: isHome ? '#about' : '/#about' },
+  { label: 'Experience', href: isHome ? '#experience' : '/#experience' },
+  { label: 'Skills', href: isHome ? '#skills' : '/#skills' },
+  { label: 'Work', href: isHome ? '#work' : '/#work' },
+  { label: 'Contact', href: isHome ? '#contact' : '/#contact' },
+  { label: 'Resume', href: '/resume/' },
+];
+---
+
+<header class="site-header" data-site-header>
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label="Mohammad Zeno, home">
+      <span class="brand-mark" aria-hidden="true">MZ</span>
+      <span class="brand-copy">
+        <strong>Mohammad Zeno</strong>
+        <span>Backend Developer</span>
+      </span>
+    </a>
+
+    <button
+      class="nav-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="primary-navigation"
+      aria-label="Open navigation"
+      data-nav-toggle
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav id="primary-navigation" class="primary-nav" aria-label="Primary navigation" data-nav>
+      <ul>
+        {
+          navItems.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={item.href === pathname ? 'page' : undefined}
+                data-nav-link
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-site-header]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const nav = document.querySelector<HTMLElement>('[data-nav]');
+
+  const closeNavigation = () => {
+    if (!header || !toggle) return;
+    header.dataset.open = 'false';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Open navigation');
+  };
+
+  toggle?.addEventListener('click', () => {
+    if (!header) return;
+    const open = header.dataset.open !== 'true';
+    header.dataset.open = String(open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+  });
+
+  nav?.querySelectorAll('[data-nav-link]').forEach((link) => {
+    link.addEventListener('click', closeNavigation);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeNavigation();
+      toggle?.focus();
+    }
+  });
+
+  const mediaQuery = window.matchMedia('(min-width: 56rem)');
+  mediaQuery.addEventListener('change', (event) => {
+    if (event.matches) closeNavigation();
+  });
+</script>

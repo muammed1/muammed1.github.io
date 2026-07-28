@@ -1,0 +1,188 @@
+---
+import { profile } from '../../data/profile';
+import { experiences } from '../../data/experience';
+import { skillGroups } from '../../data/skills';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const experience = experiences[0];
+
+if (!experience) {
+  throw new Error('At least one professional experience entry is required.');
+}
+
+const professionalGroups = skillGroups.filter((group) => group.kind !== 'learning');
+const learningGroups = skillGroups.filter((group) => group.kind === 'learning');
+
+const formatMonth = (value: string | null) => {
+  if (!value) return 'Present';
+  const [yearPart, monthPart] = value.split('-');
+  return new Intl.DateTimeFormat('en', {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(Number(yearPart), Number(monthPart ?? '1') - 1, 1)));
+};
+
+const title = 'Resume — Mohammad Zeno, Backend Developer';
+const description =
+  'Print-friendly resume for Mohammad Zeno, a backend developer and software engineer experienced in PHP, Laravel, enterprise healthcare systems, databases, and reporting.';
+---
+
+<BaseLayout {title} {description} canonicalPath="/resume/" pageClass="resume-page">
+  <section class="section--compact" aria-labelledby="resume-name">
+    <div class="container">
+      <div class="resume-actions" aria-label="Resume actions">
+        <a class="button button--secondary" href={`mailto:${profile.email}`}>Email Mohammad</a>
+        <button class="button button--primary print-button" type="button" data-print>
+          Print / save as PDF
+        </button>
+      </div>
+
+      <div class="resume-shell">
+        <aside class="resume-sidebar" aria-label="Resume profile and contact">
+          <div class="resume-monogram" aria-hidden="true">{profile.initials}</div>
+          <h1 id="resume-name">{profile.name}</h1>
+          <p class="resume-title">Backend Developer · Software Engineer</p>
+
+          <ul class="resume-contact">
+            <li><a href={`mailto:${profile.email}`}>{profile.email}</a></li>
+            <li>
+              <a
+                href={profile.linkedin}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="LinkedIn profile (opens in a new tab)">LinkedIn</a
+              >
+            </li>
+            <li>
+              <a
+                href={profile.github}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="GitHub profile (opens in a new tab)">github.com/muammed1</a
+              >
+            </li>
+          </ul>
+
+          <h2>Core technologies</h2>
+          <ul class="tag-list">
+            <li>PHP</li>
+            <li>Laravel</li>
+            <li>MySQL</li>
+            <li>Oracle Database</li>
+            <li>SQL</li>
+            <li>JavaScript</li>
+            <li>Git</li>
+          </ul>
+
+          <h2>Education</h2>
+          <p>
+            <strong>{profile.education.degree}</strong><br />
+            {profile.education.institution}<br />
+            {profile.education.location}<br />
+            <span class="status-label">{profile.education.status}</span>
+          </p>
+
+          <h2>Languages</h2>
+          <ul>
+            {
+              profile.languages.map((language) => (
+                <li>
+                  {language.name} — {language.proficiency}
+                </li>
+              ))
+            }
+          </ul>
+        </aside>
+
+        <div class="resume-main">
+          <section class="resume-section" aria-labelledby="resume-summary">
+            <h2 id="resume-summary">Professional summary</h2>
+            <p>
+              Software engineer focused on backend and enterprise applications, with professional
+              experience developing and maintaining healthcare software. Experienced in translating
+              requirements into business features, relational data models, reporting workflows, and
+              production fixes.
+            </p>
+          </section>
+
+          <section class="resume-section" aria-labelledby="resume-experience">
+            <h2 id="resume-experience">Professional experience</h2>
+            <article class="resume-entry">
+              <p class="resume-entry__date">
+                {formatMonth(experience.startDate)} — {formatMonth(experience.endDate)}
+              </p>
+              <div>
+                <h3>{experience.title}</h3>
+                <p class="resume-entry__company">{experience.company}</p>
+                <p>{experience.summary}</p>
+                <ul>
+                  {experience.highlights.map((highlight) => <li>{highlight}</li>)}
+                </ul>
+                <p>
+                  <strong>Healthcare domains:</strong>
+                  {experience.domains.join(', ')}.
+                </p>
+              </div>
+            </article>
+          </section>
+
+          <section class="resume-section" aria-labelledby="resume-project">
+            <h2 id="resume-project">Selected project</h2>
+            <article class="resume-entry">
+              <p class="resume-entry__date">Private project</p>
+              <div>
+                <h3>Gymbo</h3>
+                <p class="resume-entry__company">Engineering case study</p>
+                <p>
+                  Gym-management platform documented as covering operational, financial, and
+                  administrative workflows. Project materials describe ledger-derived balances,
+                  historical price preservation, database-backed reporting, and Dahua
+                  attendance-device synchronization.
+                </p>
+                <p>
+                  Source code and production UI are private. Technology and deployment details are
+                  intentionally not attributed where project-specific documentation is incomplete.
+                </p>
+              </div>
+            </article>
+          </section>
+
+          <section class="resume-section" aria-labelledby="resume-capabilities">
+            <h2 id="resume-capabilities">Engineering capabilities</h2>
+            {
+              professionalGroups.map((group) => (
+                <div>
+                  <h3>{group.title}</h3>
+                  <p>{group.items.join(' · ')}</p>
+                </div>
+              ))
+            }
+          </section>
+
+          <section class="resume-section" aria-labelledby="resume-learning">
+            <h2 id="resume-learning">Current learning</h2>
+            <p>
+              These topics are active development areas and are not presented as professional
+              production experience.
+            </p>
+            {
+              learningGroups.map((group) => (
+                <div>
+                  <h3>{group.title}</h3>
+                  <p>{group.items.join(' · ')}</p>
+                </div>
+              ))
+            }
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.querySelector<HTMLButtonElement>('[data-print]')?.addEventListener('click', () => {
+      window.print();
+    });
+  </script>
+</BaseLayout>

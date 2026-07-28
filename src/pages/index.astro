@@ -1,0 +1,245 @@
+---
+import { getEntry } from 'astro:content';
+import ContactLinks from '../components/ContactLinks.astro';
+import ExperienceTimeline from '../components/ExperienceTimeline.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import SkillGroup from '../components/SkillGroup.astro';
+import { experiences } from '../data/experience';
+import { profile } from '../data/profile';
+import { skillGroups } from '../data/skills';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const gymbo = await getEntry('projects', 'gymbo');
+
+if (!gymbo) {
+  throw new Error('The Gymbo project content entry is required.');
+}
+
+const pageTitle = 'Mohammad Zeno — Backend Developer & Software Engineer';
+const pageDescription =
+  'Backend developer and software engineer specializing in PHP, Laravel, enterprise business systems, relational databases, reporting, and production software delivery.';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: profile.name,
+    url: 'https://muammed1.github.io',
+    email: `mailto:${profile.email}`,
+    jobTitle: ['Backend Developer', 'Software Engineer'],
+    sameAs: [profile.linkedin, profile.github],
+    knowsAbout: [
+      'PHP',
+      'Laravel',
+      'Relational database design',
+      'Enterprise software',
+      'Business systems',
+      'Reporting systems',
+      'Production debugging',
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Mohammad Zeno — Software Engineering Portfolio',
+    url: 'https://muammed1.github.io',
+    description: pageDescription,
+    inLanguage: 'en',
+  },
+];
+
+const approachItems = [
+  {
+    title: 'Business logic clarity',
+    body: 'Model operational rules explicitly so backend behavior remains understandable as requirements evolve.',
+  },
+  {
+    title: 'Relational data integrity',
+    body: 'Design data relationships around the business, with attention to historical correctness and reporting needs.',
+  },
+  {
+    title: 'Historical correctness',
+    body: 'Preserve the facts that were true at the time of a transaction instead of rewriting history with current values.',
+  },
+  {
+    title: 'Reporting separation',
+    body: 'Keep operational writes focused while shaping complex reads for dashboards, reports, and exports.',
+  },
+  {
+    title: 'Production pragmatism',
+    body: 'Prefer conservative, maintainable decisions that support debugging, change, and day-to-day software delivery.',
+  },
+  {
+    title: 'System integration',
+    body: 'Treat external hardware and operational dependencies as clear boundaries with explicit mapping and persistence.',
+  },
+];
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalPath="/"
+  type="profile"
+  {jsonLd}
+>
+  <Hero
+    name={profile.name}
+    roles={['Backend Developer', 'Software Engineer']}
+    headline={profile.headline}
+    valueProposition={profile.valueProposition}
+    availability="Open to Work"
+    email={profile.email}
+  />
+
+  <section id="about" class="section--surface" aria-labelledby="about-heading">
+    <div class="container">
+      <SectionHeading
+        id="about-heading"
+        eyebrow="About"
+        title="Engineering around the way a business actually works."
+        description="Backend implementation is only useful when it reflects real operational rules, data relationships, and maintenance needs."
+      />
+      <div class="about-grid">
+        <div class="summary-copy">
+          {profile.summary.map((paragraph) => <p>{paragraph}</p>)}
+          <p>
+            My professional experience is in software engineering and backend delivery. My work with
+            AI is a current learning track focused on fundamentals, LLMs, prompt engineering, and
+            AI-assisted development—not a claim of production AI experience.
+          </p>
+        </div>
+        <dl class="fact-stack">
+          <div>
+            <dt>Backend</dt>
+            <dd>PHP, Laravel, SQL, business logic</dd>
+          </div>
+          <div>
+            <dt>Systems</dt>
+            <dd>Healthcare software, Gymbo, reporting</dd>
+          </div>
+          <div>
+            <dt>Engineering</dt>
+            <dd>Requirements, databases, debugging, integration</dd>
+          </div>
+          <div>
+            <dt>Current learning</dt>
+            <dd>AI Engineering foundations and advanced backend topics</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience" aria-labelledby="experience-heading">
+    <div class="container">
+      <SectionHeading
+        id="experience-heading"
+        eyebrow="Experience"
+        title="Professional software delivery in healthcare systems."
+        description="A record of building business features, maintaining production modules, resolving defects, and translating operational requirements into software."
+      />
+      <ExperienceTimeline {experiences} />
+    </div>
+  </section>
+
+  <section id="skills" class="section--surface" aria-labelledby="skills-heading">
+    <div class="container">
+      <SectionHeading
+        id="skills-heading"
+        eyebrow="Technical skills"
+        title="A practical backend toolkit, without percentage bars."
+        description="Professional technologies, supporting tools, and current learning are separated so the evidence stays clear."
+      />
+      <div class="skills-grid">
+        {
+          skillGroups.map((group) => (
+            <SkillGroup
+              title={group.title}
+              description={group.description}
+              items={group.items}
+              kind={group.kind}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="work" aria-labelledby="work-heading">
+    <div class="container">
+      <SectionHeading
+        id="work-heading"
+        eyebrow="Featured work"
+        title="A private system, documented as an engineering case study."
+        description="Gymbo is presented through verified workflow and architecture facts, with clear limits where source code, deployment evidence, or screenshots are unavailable."
+      />
+      <ProjectCard
+        title={gymbo.data.title}
+        role={gymbo.data.role}
+        summary={gymbo.data.summary}
+        status="Production delivery documented"
+        capabilities={gymbo.data.capabilities}
+        href="/projects/gymbo/"
+      />
+    </div>
+  </section>
+
+  <section class="section--surface" aria-labelledby="approach-heading">
+    <div class="container">
+      <SectionHeading
+        id="approach-heading"
+        eyebrow="Engineering approach"
+        title="Conservative decisions for systems that have to keep working."
+        description="The recurring themes behind my backend and business-systems work."
+      />
+      <div class="approach-grid">
+        {
+          approachItems.map((item) => (
+            <article class="approach-card">
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="education-heading">
+    <div class="container">
+      <SectionHeading
+        id="education-heading"
+        eyebrow="Education"
+        title="Computer Engineering, in progress."
+        description="Only the verified education status is shown—without invented dates, GPA, honors, or graduation details."
+      />
+      <article class="education-card">
+        <div class="education-mark" aria-hidden="true">CE</div>
+        <div>
+          <h3>{profile.education.degree}</h3>
+          <p>{profile.education.institution} · {profile.education.location}</p>
+        </div>
+        <span class="status-label">{profile.education.status}</span>
+      </article>
+    </div>
+  </section>
+
+  <section id="contact" class="section--compact" aria-labelledby="contact-heading">
+    <div class="container">
+      <div class="contact-panel">
+        <div class="contact-panel__copy">
+          <p class="eyebrow">Contact</p>
+          <h2 id="contact-heading">Let’s talk about backend work that matters.</h2>
+          <p>
+            I’m open to software engineering and backend opportunities. Email is the most direct way
+            to start a conversation; LinkedIn and GitHub are available for professional context.
+          </p>
+        </div>
+        <ContactLinks email={profile.email} linkedin={profile.linkedin} github={profile.github} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,51 @@
+---
+interface Props {
+  email: string;
+  linkedin: string;
+  github: string;
+}
+
+const { email, linkedin, github } = Astro.props;
+
+const links = [
+  {
+    label: 'Email',
+    value: email,
+    href: `mailto:${email}`,
+    external: false,
+  },
+  {
+    label: 'LinkedIn',
+    value: 'muhmmad-zeno',
+    href: linkedin,
+    external: true,
+  },
+  {
+    label: 'GitHub',
+    value: 'muammed1',
+    href: github,
+    external: true,
+  },
+];
+---
+
+<ul class="contact-links">
+  {
+    links.map((link) => (
+      <li>
+        <a
+          href={link.href}
+          target={link.external ? '_blank' : undefined}
+          rel={link.external ? 'noreferrer' : undefined}
+          aria-label={
+            link.external ? `${link.label}: ${link.value} (opens in a new tab)` : undefined
+          }
+        >
+          <span class="contact-label">{link.label}</span>
+          <span class="contact-value">{link.value}</span>
+          <span aria-hidden="true">{link.external ? '↗' : '→'}</span>
+        </a>
+      </li>
+    ))
+  }
+</ul>

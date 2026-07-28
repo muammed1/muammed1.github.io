@@ -1,0 +1,53 @@
+---
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import SEO from '../components/SEO.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath?: string;
+  image?: string;
+  type?: 'website' | 'article' | 'profile';
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  pageClass?: string;
+}
+
+const {
+  title,
+  description,
+  canonicalPath,
+  image,
+  type,
+  noindex,
+  jsonLd,
+  pageClass = '',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#08111f" />
+    <meta name="color-scheme" content="dark" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <SEO {title} {description} {canonicalPath} {image} {type} {noindex} {jsonLd} />
+    <slot name="head" />
+  </head>
+  <body class={pageClass}>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <Header />
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
